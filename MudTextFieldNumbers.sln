@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{5D20
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudTextFieldNumbers.Sample", "samples\MudTextFieldNumbers.Sample\MudTextFieldNumbers.Sample.csproj", "{535B04AA-9BD8-4146-B21F-9D715F44CD6D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudTextFieldNumbers.Tests", "tests\MudTextFieldNumbers.Tests\MudTextFieldNumbers.Tests.csproj", "{814D9457-2EEC-4AA1-9126-7D78C5C4BB4B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,18 @@ Global
 		{535B04AA-9BD8-4146-B21F-9D715F44CD6D}.Release|x64.Build.0 = Release|Any CPU
 		{535B04AA-9BD8-4146-B21F-9D715F44CD6D}.Release|x86.ActiveCfg = Release|Any CPU
 		{535B04AA-9BD8-4146-B21F-9D715F44CD6D}.Release|x86.Build.0 = Release|Any CPU
+		{814D9457-2EEC-4AA1-9126-7D78C5C4BB4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{814D9457-2EEC-4AA1-9126-7D78C5C4BB4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{814D9457-2EEC-4AA1-9126-7D78C5C4BB4B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{814D9457-2EEC-4AA1-9126-7D78C5C4BB4B}.Debug|x64.Build.0 = Debug|Any CPU
+		{814D9457-2EEC-4AA1-9126-7D78C5C4BB4B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{814D9457-2EEC-4AA1-9126-7D78C5C4BB4B}.Debug|x86.Build.0 = Debug|Any CPU
+		{814D9457-2EEC-4AA1-9126-7D78C5C4BB4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{814D9457-2EEC-4AA1-9126-7D78C5C4BB4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{814D9457-2EEC-4AA1-9126-7D78C5C4BB4B}.Release|x64.ActiveCfg = Release|Any CPU
+		{814D9457-2EEC-4AA1-9126-7D78C5C4BB4B}.Release|x64.Build.0 = Release|Any CPU
+		{814D9457-2EEC-4AA1-9126-7D78C5C4BB4B}.Release|x86.ActiveCfg = Release|Any CPU
+		{814D9457-2EEC-4AA1-9126-7D78C5C4BB4B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,5 +68,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{938DDB64-8F1E-42DD-87C8-CCEF564A828E} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{535B04AA-9BD8-4146-B21F-9D715F44CD6D} = {5D20AA90-6969-D8BD-9DCD-8634F4692FDA}
+		{814D9457-2EEC-4AA1-9126-7D78C5C4BB4B} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal

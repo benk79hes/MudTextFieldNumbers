@@ -1,0 +1,204 @@
+@using Microsoft.AspNetCore.Components
+@using MudBlazor
+
+@namespace MudTextFieldNumbers
+
+<div class="mud-virtual-keyboard @Class" style="@Style">
+    <MudPaper Elevation="3" Class="pa-2">
+        <MudText Typo="Typo.h6" Class="mb-2" Align="Align.Center">@Title</MudText>
+        
+        <MudGrid Spacing="1" Justify="Justify.Center">
+            @for (int i = 1; i <= 9; i++)
+            {
+                var digit = i;
+                <MudItem xs="4">
+                    <MudButton Variant="Variant.Filled" 
+                              Color="Color.Primary" 
+                              FullWidth="true" 
+                              Size="Size.Large"
+                              OnClick="() => OnDigitClick(digit)">
+                        @digit
+                    </MudButton>
+                </MudItem>
+            }
+            
+            <MudItem xs="4">
+                @if (ShowDecimalButton)
+                {
+                    <MudButton Variant="Variant.Filled" 
+                              Color="Color.Primary" 
+                              FullWidth="true" 
+                              Size="Size.Large"
+                              OnClick="OnDecimalClick">
+                        @DecimalSeparator
+                    </MudButton>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled" 
+                              Color="Color.Default" 
+                              FullWidth="true" 
+                              Size="Size.Large"
+                              Disabled="true">
+                    </MudButton>
+                }
+            </MudItem>
+            
+            <MudItem xs="4">
+                <MudButton Variant="Variant.Filled" 
+                          Color="Color.Primary" 
+                          FullWidth="true" 
+                          Size="Size.Large"
+                          OnClick="() => OnDigitClick(0)">
+                    0
+                </MudButton>
+            </MudItem>
+            
+            @if (ShowNegativeButton)
+            {
+                <MudItem xs="4">
+                    <MudButton Variant="Variant.Filled" 
+                              Color="Color.Primary" 
+                              FullWidth="true" 
+                              Size="Size.Large"
+                              OnClick="OnNegativeClick">
+                        +/−
+                    </MudButton>
+                </MudItem>
+            }
+            else
+            {
+                <MudItem xs="4">
+                    <MudButton Variant="Variant.Filled" 
+                              Color="Color.Secondary" 
+                              FullWidth="true" 
+                              Size="Size.Large"
+                              OnClick="OnBackspaceClick"
+                              StartIcon="@Icons.Material.Filled.Backspace">
+                    </MudButton>
+                </MudItem>
+            }
+            
+            @if (ShowNegativeButton)
+            {
+                <MudItem xs="12">
+                    <MudButton Variant="Variant.Filled" 
+                              Color="Color.Secondary" 
+                              FullWidth="true" 
+                              Size="Size.Medium"
+                              OnClick="OnBackspaceClick"
+                              StartIcon="@Icons.Material.Filled.Backspace">
+                        Backspace
+                    </MudButton>
+                </MudItem>
+            }
+            
+            <MudItem xs="12">
+                <MudButton Variant="Variant.Outlined" 
+                          Color="Color.Error" 
+                          FullWidth="true" 
+                          Size="Size.Medium"
+                          OnClick="OnClearClick"
+                          StartIcon="@Icons.Material.Filled.Clear">
+                    Clear
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+</div>
+
+@code {
+    /// <summary>
+    /// Title displayed at the top of the keyboard. Default is "Virtual Keyboard".
+    /// </summary>
+    [Parameter]
+    public string Title { get; set; } = "Virtual Keyboard";
+
+    /// <summary>
+    /// Whether to show the decimal separator button. Default is true.
+    /// Set to false for integer-only input.
+    /// </summary>
+    [Parameter]
+    public bool ShowDecimalButton { get; set; } = true;
+
+    /// <summary>
+    /// Whether to show the negative/positive toggle button (+/-). Default is true.
+    /// When enabled, the negative button is displayed in its own row, and the backspace button moves to a separate row.
+    /// </summary>
+    [Parameter]
+    public bool ShowNegativeButton { get; set; } = true;
+
+    /// <summary>
+    /// The decimal separator character to display on the button. Default is ".".
+    /// Can be customized to "," for locales that use comma as decimal separator.
+    /// </summary>
+    [Parameter]
+    public string DecimalSeparator { get; set; } = ".";
+
+    /// <summary>
+    /// Event callback invoked when a digit button (0-9) is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> DigitClicked { get; set; }
+
+    /// <summary>
+    /// Event callback invoked when the decimal separator button is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback DecimalClicked { get; set; }
+
+    /// <summary>
+    /// Event callback invoked when the negative/positive toggle button (+/-) is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback NegativeClicked { get; set; }
+
+    /// <summary>
+    /// Event callback invoked when the backspace button is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback BackspaceClicked { get; set; }
+
+    /// <summary>
+    /// Event callback invoked when the clear button is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback ClearClicked { get; set; }
+
+    /// <summary>
+    /// Additional CSS class names to apply to the keyboard container.
+    /// </summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>
+    /// Additional inline styles to apply to the keyboard container.
+    /// </summary>
+    [Parameter]
+    public string? Style { get; set; }
+
+    private async Task OnDigitClick(int digit)
+    {
+        await DigitClicked.InvokeAsync(digit);
+    }
+
+    private async Task OnDecimalClick()
+    {
+        await DecimalClicked.InvokeAsync();
+    }
+
+    private async Task OnNegativeClick()
+    {
+        await NegativeClicked.InvokeAsync();
+    }
+
+    private async Task OnBackspaceClick()
+    {
+        await BackspaceClicked.InvokeAsync();
+    }
+
+    private async Task OnClearClick()
+    {
+        await ClearClicked.InvokeAsync();
+    }
+}

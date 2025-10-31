@@ -1,0 +1,320 @@
+@page "/keyboard"
+@rendermode InteractiveServer
+
+<PageTitle>Virtual Keyboard Demo</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Virtual Keyboard Demo</MudText>
+<MudText Class="mb-8">Demonstration of the MudVirtualKeyboard component integrated with integer and decimal input fields.</MudText>
+
+<MudGrid>
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Integer Input with Virtual Keyboard</MudText>
+            <MudText Class="mb-4">Click the number buttons on the keyboard below to enter values.</MudText>
+            
+            <MudTextFieldInteger @bind-Value="_integerValue" 
+                                @bind-Text="_integerText"
+                                Label="Enter Integer Value" 
+                                Variant="Variant.Outlined"
+                                Placeholder="Use keyboard below"
+                                Class="mb-4" />
+            
+            <MudText Class="mb-4">Current value: @(_integerValue?.ToString() ?? "null")</MudText>
+            
+            <MudVirtualKeyboard ShowDecimalButton="false"
+                              ShowNegativeButton="true"
+                              Title="Integer Keyboard"
+                              DigitClicked="OnIntegerDigitClicked"
+                              NegativeClicked="OnIntegerNegativeClicked"
+                              BackspaceClicked="OnIntegerBackspace"
+                              ClearClicked="OnIntegerClear" />
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Decimal Input with Virtual Keyboard</MudText>
+            <MudText Class="mb-4">Click the number buttons and decimal point on the keyboard below.</MudText>
+            
+            <MudTextFieldDecimal @bind-Value="_decimalValue"
+                                @bind-Text="_decimalText"
+                                DecimalPlaces="2"
+                                Label="Enter Decimal Value" 
+                                Variant="Variant.Outlined"
+                                Placeholder="Use keyboard below"
+                                Class="mb-4" />
+            
+            <MudText Class="mb-4">Current value: @(_decimalValue?.ToString("F2") ?? "null")</MudText>
+            
+            <MudVirtualKeyboard ShowDecimalButton="true"
+                              ShowNegativeButton="true"
+                              DecimalSeparator="."
+                              Title="Decimal Keyboard"
+                              DigitClicked="OnDecimalDigitClicked"
+                              DecimalClicked="OnDecimalPointClicked"
+                              NegativeClicked="OnDecimalNegativeClicked"
+                              BackspaceClicked="OnDecimalBackspace"
+                              ClearClicked="OnDecimalClear" />
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Decimal with Comma Separator</MudText>
+            <MudText Class="mb-4">Example using comma (,) as decimal separator for European locales.</MudText>
+            
+            <MudTextFieldDecimal @bind-Value="_decimalCommaValue"
+                                @bind-Text="_decimalCommaText"
+                                DecimalPlaces="2"
+                                DecimalSeparator=","
+                                Label="Enter Price (€)" 
+                                Variant="Variant.Outlined"
+                                Placeholder="Use keyboard below"
+                                Class="mb-4" />
+            
+            <MudText Class="mb-4">Current value: @(_decimalCommaValue?.ToString("F2") ?? "null") €</MudText>
+            
+            <MudVirtualKeyboard ShowDecimalButton="true"
+                              ShowNegativeButton="true"
+                              DecimalSeparator=","
+                              Title="Price Keyboard (€)"
+                              DigitClicked="OnDecimalCommaDigitClicked"
+                              DecimalClicked="OnDecimalCommaPointClicked"
+                              NegativeClicked="OnDecimalCommaNegativeClicked"
+                              BackspaceClicked="OnDecimalCommaBackspace"
+                              ClearClicked="OnDecimalCommaClear" />
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Benefits of Virtual Keyboard</MudText>
+            <MudList T="string" Dense="true">
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Works on all devices - desktop, tablet, and mobile</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Consistent UI across all platforms</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>No keyboard popup on mobile devices (keeps full screen)</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Easy validation and input control</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Perfect for kiosk applications</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Customizable decimal separator for different locales</MudText>
+                </MudListItem>
+            </MudList>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    // Integer input state
+    private int? _integerValue;
+    private string _integerText = "";
+
+    // Decimal input state
+    private decimal? _decimalValue;
+    private string _decimalText = "";
+
+    // Decimal with comma state
+    private decimal? _decimalCommaValue;
+    private string _decimalCommaText = "";
+
+    // Integer keyboard handlers
+    private void OnIntegerDigitClicked(int digit)
+    {
+        _integerText += digit.ToString();
+        if (int.TryParse(_integerText, out int result))
+        {
+            _integerValue = result;
+        }
+    }
+
+    private void OnIntegerBackspace()
+    {
+        if (_integerText.Length > 0)
+        {
+            _integerText = _integerText[..^1];
+            if (string.IsNullOrEmpty(_integerText))
+            {
+                _integerValue = null;
+            }
+            else if (int.TryParse(_integerText, out int result))
+            {
+                _integerValue = result;
+            }
+        }
+    }
+
+    private void OnIntegerClear()
+    {
+        _integerText = "";
+        _integerValue = null;
+    }
+
+    private void OnIntegerNegativeClicked()
+    {
+        if (!string.IsNullOrEmpty(_integerText))
+        {
+            if (_integerText.StartsWith("-"))
+            {
+                _integerText = _integerText[1..];
+            }
+            else
+            {
+                _integerText = "-" + _integerText;
+            }
+            
+            if (int.TryParse(_integerText, out int result))
+            {
+                _integerValue = result;
+            }
+        }
+    }
+
+    // Decimal keyboard handlers
+    private void OnDecimalDigitClicked(int digit)
+    {
+        _decimalText += digit.ToString();
+        if (decimal.TryParse(_decimalText, out decimal result))
+        {
+            _decimalValue = result;
+        }
+    }
+
+    private void OnDecimalPointClicked()
+    {
+        if (!_decimalText.Contains("."))
+        {
+            if (string.IsNullOrEmpty(_decimalText))
+            {
+                _decimalText = "0.";
+            }
+            else
+            {
+                _decimalText += ".";
+            }
+        }
+    }
+
+    private void OnDecimalBackspace()
+    {
+        if (_decimalText.Length > 0)
+        {
+            _decimalText = _decimalText[..^1];
+            if (string.IsNullOrEmpty(_decimalText))
+            {
+                _decimalValue = null;
+            }
+            else if (decimal.TryParse(_decimalText, out decimal result))
+            {
+                _decimalValue = result;
+            }
+        }
+    }
+
+    private void OnDecimalClear()
+    {
+        _decimalText = "";
+        _decimalValue = null;
+    }
+
+    private void OnDecimalNegativeClicked()
+    {
+        if (!string.IsNullOrEmpty(_decimalText))
+        {
+            if (_decimalText.StartsWith("-"))
+            {
+                _decimalText = _decimalText[1..];
+            }
+            else
+            {
+                _decimalText = "-" + _decimalText;
+            }
+            
+            if (decimal.TryParse(_decimalText, out decimal result))
+            {
+                _decimalValue = result;
+            }
+        }
+    }
+
+    // Decimal with comma keyboard handlers
+    private void OnDecimalCommaDigitClicked(int digit)
+    {
+        _decimalCommaText += digit.ToString();
+        var normalized = _decimalCommaText.Replace(",", ".");
+        if (decimal.TryParse(normalized, out decimal result))
+        {
+            _decimalCommaValue = result;
+        }
+    }
+
+    private void OnDecimalCommaPointClicked()
+    {
+        if (!_decimalCommaText.Contains(","))
+        {
+            if (string.IsNullOrEmpty(_decimalCommaText))
+            {
+                _decimalCommaText = "0,";
+            }
+            else
+            {
+                _decimalCommaText += ",";
+            }
+        }
+    }
+
+    private void OnDecimalCommaBackspace()
+    {
+        if (_decimalCommaText.Length > 0)
+        {
+            _decimalCommaText = _decimalCommaText[..^1];
+            if (string.IsNullOrEmpty(_decimalCommaText))
+            {
+                _decimalCommaValue = null;
+            }
+            else
+            {
+                var normalized = _decimalCommaText.Replace(",", ".");
+                if (decimal.TryParse(normalized, out decimal result))
+                {
+                    _decimalCommaValue = result;
+                }
+            }
+        }
+    }
+
+    private void OnDecimalCommaClear()
+    {
+        _decimalCommaText = "";
+        _decimalCommaValue = null;
+    }
+
+    private void OnDecimalCommaNegativeClicked()
+    {
+        if (!string.IsNullOrEmpty(_decimalCommaText))
+        {
+            if (_decimalCommaText.StartsWith("-"))
+            {
+                _decimalCommaText = _decimalCommaText[1..];
+            }
+            else
+            {
+                _decimalCommaText = "-" + _decimalCommaText;
+            }
+            
+            var normalized = _decimalCommaText.Replace(",", ".");
+            if (decimal.TryParse(normalized, out decimal result))
+            {
+                _decimalCommaValue = result;
+            }
+        }
+    }
+}
