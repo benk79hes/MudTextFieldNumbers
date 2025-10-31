@@ -1,19 +1,48 @@
 @namespace MudTextFieldNumbers
 @inherits MudBlazor.MudTextField<decimal?>
 
+<!--
+    MudTextFieldDecimal - A numeric text field component for decimal values.
+    
+    This component extends MudTextField to provide a better user experience for decimal input,
+    especially on mobile devices with virtual keyboards. It uses a text input with inputmode="decimal"
+    instead of input type="number" to avoid issues with virtual keyboards.
+    
+    Key Features:
+    - Compatible with virtual keyboards on mobile devices
+    - Uses InputMode.decimal for optimized keyboard layout
+    - Configurable decimal places
+    - Configurable decimal separator (e.g., comma or dot)
+    - Automatic validation and formatting
+    - Supports all MudTextField properties and events
+    
+    Usage:
+    <MudTextFieldDecimal @bind-Value="myDecimalValue" DecimalPlaces="2" Label="Enter amount" />
+    <MudTextFieldDecimal @bind-Value="myDecimalValue" DecimalPlaces="3" DecimalSeparator="," Label="Prix" />
+-->
+
 @code {
     /// <summary>
     /// Number of decimal places to display and accept. Default is 2.
+    /// The value will be automatically rounded to this number of decimal places.
     /// </summary>
     [Parameter]
     public int DecimalPlaces { get; set; } = 2;
 
     /// <summary>
-    /// The decimal separator character. If not set, uses the current culture's decimal separator.
+    /// The decimal separator character to use for input and display.
+    /// If not set, uses the current culture's decimal separator.
+    /// Common values: "." (dot) or "," (comma).
     /// </summary>
     [Parameter]
     public string? DecimalSeparator { get; set; }
 
+    /// <summary>
+    /// Initializes the component with proper settings for decimal input.
+    /// Configures the input type as text with decimal input mode and sets up
+    /// the converter for decimal value parsing and formatting with the specified
+    /// decimal places and separator.
+    /// </summary>
     protected override void OnInitialized()
     {
         base.OnInitialized();

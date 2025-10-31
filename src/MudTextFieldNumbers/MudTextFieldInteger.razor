@@ -1,7 +1,29 @@
 @namespace MudTextFieldNumbers
 @inherits MudBlazor.MudTextField<int?>
 
+<!--
+    MudTextFieldInteger - A numeric text field component for integer values.
+    
+    This component extends MudTextField to provide a better user experience for integer input,
+    especially on mobile devices with virtual keyboards. It uses a text input with inputmode="numeric"
+    instead of input type="number" to avoid issues with virtual keyboards.
+    
+    Key Features:
+    - Compatible with virtual keyboards on mobile devices
+    - Uses InputMode.numeric for optimized keyboard layout
+    - Automatic validation and formatting
+    - Supports all MudTextField properties and events
+    
+    Usage:
+    <MudTextFieldInteger @bind-Value="myIntValue" Label="Enter number" />
+-->
+
 @code {
+    /// <summary>
+    /// Initializes the component with proper settings for integer input.
+    /// Configures the input type as text with numeric input mode and sets up
+    /// the converter for integer value parsing and formatting.
+    /// </summary>
     protected override void OnInitialized()
     {
         base.OnInitialized();
