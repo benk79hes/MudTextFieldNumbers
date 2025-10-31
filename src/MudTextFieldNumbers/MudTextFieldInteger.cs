@@ -1,24 +1,26 @@
-@namespace MudTextFieldNumbers
-@inherits MudBlazor.MudTextField<int?>
+using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
-<!--
-    MudTextFieldInteger - A numeric text field component for integer values.
-    
-    This component extends MudTextField to provide a better user experience for integer input,
-    especially on mobile devices with virtual keyboards. It uses a text input with inputmode="numeric"
-    instead of input type="number" to avoid issues with virtual keyboards.
-    
-    Key Features:
-    - Compatible with virtual keyboards on mobile devices
-    - Uses InputMode.numeric for optimized keyboard layout
-    - Automatic validation and formatting
-    - Supports all MudTextField properties and events
-    
-    Usage:
-    <MudTextFieldInteger @bind-Value="myIntValue" Label="Enter number" />
--->
+namespace MudTextFieldNumbers;
 
-@code {
+/// <summary>
+/// MudTextFieldInteger - A numeric text field component for integer values.
+/// 
+/// This component extends MudTextField to provide a better user experience for integer input,
+/// especially on mobile devices with virtual keyboards. It uses a text input with inputmode="numeric"
+/// instead of input type="number" to avoid issues with virtual keyboards.
+/// 
+/// Key Features:
+/// - Compatible with virtual keyboards on mobile devices
+/// - Uses InputMode.numeric for optimized keyboard layout
+/// - Automatic validation and formatting
+/// - Supports all MudTextField properties and events
+/// 
+/// Usage:
+/// <![CDATA[<MudTextFieldInteger @bind-Value="myIntValue" Label="Enter number" />]]>
+/// </summary>
+public class MudTextFieldInteger : MudTextField<int?>
+{
     /// <summary>
     /// Initializes the component with proper settings for integer input.
     /// Configures the input type as text with numeric input mode and sets up
@@ -29,13 +31,13 @@
         base.OnInitialized();
         
         // Override input type to text to support virtual keyboards
-        InputType = MudBlazor.InputType.Text;
+        InputType = InputType.Text;
         
         // Set input mode to numeric for mobile keyboards
-        InputMode = MudBlazor.InputMode.numeric;
+        InputMode = InputMode.numeric;
         
         // Configure converter for integer values
-        Converter = new MudBlazor.Converter<int?>
+        Converter = new Converter<int?>
         {
             SetFunc = value => value?.ToString(System.Globalization.CultureInfo.InvariantCulture),
             GetFunc = text =>

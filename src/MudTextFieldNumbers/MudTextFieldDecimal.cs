@@ -1,27 +1,29 @@
-@namespace MudTextFieldNumbers
-@inherits MudBlazor.MudTextField<decimal?>
+using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
-<!--
-    MudTextFieldDecimal - A numeric text field component for decimal values.
-    
-    This component extends MudTextField to provide a better user experience for decimal input,
-    especially on mobile devices with virtual keyboards. It uses a text input with inputmode="decimal"
-    instead of input type="number" to avoid issues with virtual keyboards.
-    
-    Key Features:
-    - Compatible with virtual keyboards on mobile devices
-    - Uses InputMode.decimal for optimized keyboard layout
-    - Configurable decimal places
-    - Configurable decimal separator (e.g., comma or dot)
-    - Automatic validation and formatting
-    - Supports all MudTextField properties and events
-    
-    Usage:
-    <MudTextFieldDecimal @bind-Value="myDecimalValue" DecimalPlaces="2" Label="Enter amount" />
-    <MudTextFieldDecimal @bind-Value="myDecimalValue" DecimalPlaces="3" DecimalSeparator="," Label="Prix" />
--->
+namespace MudTextFieldNumbers;
 
-@code {
+/// <summary>
+/// MudTextFieldDecimal - A numeric text field component for decimal values.
+/// 
+/// This component extends MudTextField to provide a better user experience for decimal input,
+/// especially on mobile devices with virtual keyboards. It uses a text input with inputmode="decimal"
+/// instead of input type="number" to avoid issues with virtual keyboards.
+/// 
+/// Key Features:
+/// - Compatible with virtual keyboards on mobile devices
+/// - Uses InputMode.decimal for optimized keyboard layout
+/// - Configurable decimal places
+/// - Configurable decimal separator (e.g., comma or dot)
+/// - Automatic validation and formatting
+/// - Supports all MudTextField properties and events
+/// 
+/// Usage:
+/// <![CDATA[<MudTextFieldDecimal @bind-Value="myDecimalValue" DecimalPlaces="2" Label="Enter amount" />]]>
+/// <![CDATA[<MudTextFieldDecimal @bind-Value="myDecimalValue" DecimalPlaces="3" DecimalSeparator="," Label="Prix" />]]>
+/// </summary>
+public class MudTextFieldDecimal : MudTextField<decimal?>
+{
     /// <summary>
     /// Number of decimal places to display and accept. Default is 2.
     /// The value will be automatically rounded to this number of decimal places.
@@ -48,17 +50,17 @@
         base.OnInitialized();
         
         // Override input type to text to support virtual keyboards
-        InputType = MudBlazor.InputType.Text;
+        InputType = InputType.Text;
         
         // Set input mode to decimal for mobile keyboards
-        InputMode = MudBlazor.InputMode.@decimal;
+        InputMode = InputMode.@decimal;
         
         // Get the decimal separator to use
         var decimalSeparator = DecimalSeparator ?? 
             System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
         
         // Configure converter for decimal values
-        Converter = new MudBlazor.Converter<decimal?>
+        Converter = new Converter<decimal?>
         {
             SetFunc = value =>
             {
