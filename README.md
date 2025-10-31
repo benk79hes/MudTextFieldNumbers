@@ -58,6 +58,7 @@ A customizable on-screen numeric keyboard component for entering integer and dec
 **Features:**
 - 0-9 digit buttons
 - Optional decimal point button
+- Positive/negative toggle button (+/−)
 - Backspace and Clear functions
 - Customizable decimal separator (. or ,)
 - Integer or decimal mode
@@ -92,10 +93,12 @@ A customizable on-screen numeric keyboard component for entering integer and dec
 
 **Properties:**
 - `ShowDecimalButton` (bool): Show/hide the decimal separator button (default: true)
+- `ShowNegativeButton` (bool): Show/hide the +/− button for toggling positive/negative (default: true)
 - `DecimalSeparator` (string): Character for decimal separator (default: ".")
 - `Title` (string): Title displayed at the top of the keyboard
 - `DigitClicked` (EventCallback<int>): Fired when a digit button is clicked
 - `DecimalClicked` (EventCallback): Fired when the decimal separator button is clicked
+- `NegativeClicked` (EventCallback): Fired when the +/− button is clicked
 - `BackspaceClicked` (EventCallback): Fired when the backspace button is clicked
 - `ClearClicked` (EventCallback): Fired when the clear button is clicked
 

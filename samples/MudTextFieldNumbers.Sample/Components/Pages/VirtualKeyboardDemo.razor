@@ -22,8 +22,10 @@
             <MudText Class="mb-4">Current value: @(_integerValue?.ToString() ?? "null")</MudText>
             
             <MudVirtualKeyboard ShowDecimalButton="false"
+                              ShowNegativeButton="true"
                               Title="Integer Keyboard"
                               DigitClicked="OnIntegerDigitClicked"
+                              NegativeClicked="OnIntegerNegativeClicked"
                               BackspaceClicked="OnIntegerBackspace"
                               ClearClicked="OnIntegerClear" />
         </MudPaper>
@@ -45,10 +47,12 @@
             <MudText Class="mb-4">Current value: @(_decimalValue?.ToString("F2") ?? "null")</MudText>
             
             <MudVirtualKeyboard ShowDecimalButton="true"
+                              ShowNegativeButton="true"
                               DecimalSeparator="."
                               Title="Decimal Keyboard"
                               DigitClicked="OnDecimalDigitClicked"
                               DecimalClicked="OnDecimalPointClicked"
+                              NegativeClicked="OnDecimalNegativeClicked"
                               BackspaceClicked="OnDecimalBackspace"
                               ClearClicked="OnDecimalClear" />
         </MudPaper>
@@ -71,10 +75,12 @@
             <MudText Class="mb-4">Current value: @(_decimalCommaValue?.ToString("F2") ?? "null") €</MudText>
             
             <MudVirtualKeyboard ShowDecimalButton="true"
+                              ShowNegativeButton="true"
                               DecimalSeparator=","
                               Title="Price Keyboard (€)"
                               DigitClicked="OnDecimalCommaDigitClicked"
                               DecimalClicked="OnDecimalCommaPointClicked"
+                              NegativeClicked="OnDecimalCommaNegativeClicked"
                               BackspaceClicked="OnDecimalCommaBackspace"
                               ClearClicked="OnDecimalCommaClear" />
         </MudPaper>
@@ -152,6 +158,26 @@
         _integerValue = null;
     }
 
+    private void OnIntegerNegativeClicked()
+    {
+        if (!string.IsNullOrEmpty(_integerText))
+        {
+            if (_integerText.StartsWith("-"))
+            {
+                _integerText = _integerText[1..];
+            }
+            else
+            {
+                _integerText = "-" + _integerText;
+            }
+            
+            if (int.TryParse(_integerText, out int result))
+            {
+                _integerValue = result;
+            }
+        }
+    }
+
     // Decimal keyboard handlers
     private void OnDecimalDigitClicked(int digit)
     {
@@ -197,6 +223,26 @@
     {
         _decimalText = "";
         _decimalValue = null;
+    }
+
+    private void OnDecimalNegativeClicked()
+    {
+        if (!string.IsNullOrEmpty(_decimalText))
+        {
+            if (_decimalText.StartsWith("-"))
+            {
+                _decimalText = _decimalText[1..];
+            }
+            else
+            {
+                _decimalText = "-" + _decimalText;
+            }
+            
+            if (decimal.TryParse(_decimalText, out decimal result))
+            {
+                _decimalValue = result;
+            }
+        }
     }
 
     // Decimal with comma keyboard handlers
@@ -249,5 +295,26 @@
     {
         _decimalCommaText = "";
         _decimalCommaValue = null;
+    }
+
+    private void OnDecimalCommaNegativeClicked()
+    {
+        if (!string.IsNullOrEmpty(_decimalCommaText))
+        {
+            if (_decimalCommaText.StartsWith("-"))
+            {
+                _decimalCommaText = _decimalCommaText[1..];
+            }
+            else
+            {
+                _decimalCommaText = "-" + _decimalCommaText;
+            }
+            
+            var normalized = _decimalCommaText.Replace(",", ".");
+            if (decimal.TryParse(normalized, out decimal result))
+            {
+                _decimalCommaValue = result;
+            }
+        }
     }
 }

@@ -185,6 +185,7 @@ public class MudVirtualKeyboardTests : TestContext
         // Arrange
         bool backspaceClicked = false;
         var cut = RenderComponent<MudVirtualKeyboard>(parameters => parameters
+            .Add(p => p.ShowNegativeButton, false)  // Disable negative button to keep backspace in its original position
             .Add(p => p.BackspaceClicked, () => backspaceClicked = true));
 
         // Act - Find backspace button by checking for button with icon
@@ -193,7 +194,7 @@ public class MudVirtualKeyboardTests : TestContext
         {
             var buttonHtml = b.OuterHtml.ToLower();
             // Check if button has an icon child element (backspace icon)
-            return buttonHtml.Contains("mud-icon") && b.TextContent.Trim() == "";
+            return buttonHtml.Contains("mud-icon");
         });
         
         Assert.NotNull(backspaceButton);
@@ -275,5 +276,55 @@ public class MudVirtualKeyboardTests : TestContext
         var buttons = cut.FindAll("button");
         var decimalButton = buttons.FirstOrDefault(b => b.TextContent.Contains("."));
         Assert.NotNull(decimalButton);
+    }
+
+    [Fact]
+    public void MudVirtualKeyboard_Renders_NegativeButton_WhenShowNegativeButtonIsTrue()
+    {
+        // Act
+        var cut = RenderComponent<MudVirtualKeyboard>(parameters => parameters
+            .Add(p => p.ShowDecimalButton, false)
+            .Add(p => p.ShowNegativeButton, true));
+
+        // Assert
+        var buttons = cut.FindAll("button");
+        Assert.Contains(buttons, b => b.TextContent.Contains("+/−") || b.TextContent.Contains("+/-"));
+    }
+
+    [Fact]
+    public void MudVirtualKeyboard_NegativeClicked_EventFires_WhenNegativeButtonClicked()
+    {
+        // Arrange
+        bool negativeClicked = false;
+        var cut = RenderComponent<MudVirtualKeyboard>(parameters => parameters
+            .Add(p => p.ShowDecimalButton, false)
+            .Add(p => p.ShowNegativeButton, true)
+            .Add(p => p.NegativeClicked, () => negativeClicked = true));
+
+        // Act
+        var buttons = cut.FindAll("button");
+        var negativeButton = buttons.First(b => b.TextContent.Contains("+/−") || b.TextContent.Contains("+/-"));
+        negativeButton.Click();
+
+        // Assert
+        Assert.True(negativeClicked);
+    }
+
+    [Fact]
+    public void MudVirtualKeyboard_ShowsNegativeAndDecimal_WhenBothEnabled()
+    {
+        // Act - When both ShowDecimalButton and ShowNegativeButton are true
+        var cut = RenderComponent<MudVirtualKeyboard>(parameters => parameters
+            .Add(p => p.ShowDecimalButton, true)
+            .Add(p => p.ShowNegativeButton, true)
+            .Add(p => p.DecimalSeparator, "."));
+
+        // Assert - Should show both buttons (negative in its own row)
+        var buttons = cut.FindAll("button");
+        var decimalButton = buttons.FirstOrDefault(b => b.TextContent.Contains("."));
+        var negativeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("+/−") || b.TextContent.Contains("+/-"));
+        
+        Assert.NotNull(decimalButton);
+        Assert.NotNull(negativeButton);
     }
 }

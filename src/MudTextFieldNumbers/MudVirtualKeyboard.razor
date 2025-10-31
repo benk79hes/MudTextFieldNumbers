@@ -54,15 +54,44 @@
                 </MudButton>
             </MudItem>
             
-            <MudItem xs="4">
-                <MudButton Variant="Variant.Filled" 
-                          Color="Color.Secondary" 
-                          FullWidth="true" 
-                          Size="Size.Large"
-                          OnClick="OnBackspaceClick"
-                          StartIcon="@Icons.Material.Filled.Backspace">
-                </MudButton>
-            </MudItem>
+            @if (ShowNegativeButton)
+            {
+                <MudItem xs="4">
+                    <MudButton Variant="Variant.Filled" 
+                              Color="Color.Primary" 
+                              FullWidth="true" 
+                              Size="Size.Large"
+                              OnClick="OnNegativeClick">
+                        +/−
+                    </MudButton>
+                </MudItem>
+            }
+            else
+            {
+                <MudItem xs="4">
+                    <MudButton Variant="Variant.Filled" 
+                              Color="Color.Secondary" 
+                              FullWidth="true" 
+                              Size="Size.Large"
+                              OnClick="OnBackspaceClick"
+                              StartIcon="@Icons.Material.Filled.Backspace">
+                    </MudButton>
+                </MudItem>
+            }
+            
+            @if (ShowNegativeButton)
+            {
+                <MudItem xs="12">
+                    <MudButton Variant="Variant.Filled" 
+                              Color="Color.Secondary" 
+                              FullWidth="true" 
+                              Size="Size.Medium"
+                              OnClick="OnBackspaceClick"
+                              StartIcon="@Icons.Material.Filled.Backspace">
+                        Backspace
+                    </MudButton>
+                </MudItem>
+            }
             
             <MudItem xs="12">
                 <MudButton Variant="Variant.Outlined" 
@@ -93,6 +122,13 @@
     public bool ShowDecimalButton { get; set; } = true;
 
     /// <summary>
+    /// Whether to show the negative/positive toggle button (+/-). Default is true.
+    /// When enabled, the negative button is displayed in its own row, and the backspace button moves to a separate row.
+    /// </summary>
+    [Parameter]
+    public bool ShowNegativeButton { get; set; } = true;
+
+    /// <summary>
     /// The decimal separator character to display on the button. Default is ".".
     /// Can be customized to "," for locales that use comma as decimal separator.
     /// </summary>
@@ -110,6 +146,12 @@
     /// </summary>
     [Parameter]
     public EventCallback DecimalClicked { get; set; }
+
+    /// <summary>
+    /// Event callback invoked when the negative/positive toggle button (+/-) is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback NegativeClicked { get; set; }
 
     /// <summary>
     /// Event callback invoked when the backspace button is clicked.
@@ -143,6 +185,11 @@
     private async Task OnDecimalClick()
     {
         await DecimalClicked.InvokeAsync();
+    }
+
+    private async Task OnNegativeClick()
+    {
+        await NegativeClicked.InvokeAsync();
     }
 
     private async Task OnBackspaceClick()

@@ -89,11 +89,8 @@ public class VirtualKeyboardIntegrationTests : TestContext
         buttons3.First(b => b.TextContent.Trim() == "3").Click();
         
         var buttons4 = cut.FindAll("button");
-        var backspaceButton = buttons4.FirstOrDefault(b => 
-        {
-            var buttonHtml = b.OuterHtml.ToLower();
-            return buttonHtml.Contains("mud-icon") && b.TextContent.Trim() == "";
-        });
+        // When ShowNegativeButton=true, backspace has text "Backspace"
+        var backspaceButton = buttons4.FirstOrDefault(b => b.TextContent.Contains("Backspace"));
         Assert.NotNull(backspaceButton);
         backspaceButton.Click();
 
@@ -151,6 +148,55 @@ public class VirtualKeyboardIntegrationTests : TestContext
         var input = cut.Find("input");
         Assert.Contains(",", input.GetAttribute("value"));
     }
+
+    [Fact]
+    public void VirtualKeyboard_WithIntegerField_NegativeButton_TogglesSign()
+    {
+        // Arrange
+        var cut = RenderComponent<TestIntegerFieldWithKeyboard>();
+
+        // Act - Click 4, 2, then toggle negative
+        var buttons1 = cut.FindAll("button");
+        buttons1.First(b => b.TextContent.Trim() == "4").Click();
+        
+        var buttons2 = cut.FindAll("button");
+        buttons2.First(b => b.TextContent.Trim() == "2").Click();
+        
+        var buttons3 = cut.FindAll("button");
+        var negativeButton = buttons3.FirstOrDefault(b => b.TextContent.Contains("+/−") || b.TextContent.Contains("+/-"));
+        Assert.NotNull(negativeButton);
+        negativeButton.Click();
+
+        // Assert
+        var input = cut.Find("input");
+        Assert.Equal("-42", input.GetAttribute("value"));
+    }
+
+    [Fact]
+    public void VirtualKeyboard_WithDecimalField_NegativeButton_TogglesSign()
+    {
+        // Arrange
+        var cut = RenderComponent<TestDecimalFieldWithKeyboard>();
+
+        // Act - Click 3, decimal, 5, then toggle negative
+        var buttons1 = cut.FindAll("button");
+        buttons1.First(b => b.TextContent.Trim() == "3").Click();
+        
+        var buttons2 = cut.FindAll("button");
+        buttons2.First(b => b.TextContent.Contains(".")).Click();
+        
+        var buttons3 = cut.FindAll("button");
+        buttons3.First(b => b.TextContent.Trim() == "5").Click();
+        
+        var buttons4 = cut.FindAll("button");
+        var negativeButton = buttons4.FirstOrDefault(b => b.TextContent.Contains("+/−") || b.TextContent.Contains("+/-"));
+        Assert.NotNull(negativeButton);
+        negativeButton.Click();
+
+        // Assert
+        var input = cut.Find("input");
+        Assert.Equal("-3.5", input.GetAttribute("value"));
+    }
 }
 
 /// <summary>
@@ -176,12 +222,33 @@ public class TestIntegerFieldWithKeyboard : ComponentBase
         // Render MudVirtualKeyboard
         builder.OpenComponent<MudVirtualKeyboard>(seq++);
         builder.AddAttribute(seq++, "ShowDecimalButton", false);
+        builder.AddAttribute(seq++, "ShowNegativeButton", true);
         builder.AddAttribute(seq++, "DigitClicked", EventCallback.Factory.Create<int>(this, digit =>
         {
             _currentText += digit.ToString();
             if (int.TryParse(_currentText, out int result))
             {
                 _value = result;
+            }
+            StateHasChanged();
+        }));
+        builder.AddAttribute(seq++, "NegativeClicked", EventCallback.Factory.Create(this, () =>
+        {
+            if (!string.IsNullOrEmpty(_currentText))
+            {
+                if (_currentText.StartsWith("-"))
+                {
+                    _currentText = _currentText[1..];
+                }
+                else
+                {
+                    _currentText = "-" + _currentText;
+                }
+                
+                if (int.TryParse(_currentText, out int result))
+                {
+                    _value = result;
+                }
             }
             StateHasChanged();
         }));
@@ -235,6 +302,7 @@ public class TestDecimalFieldWithKeyboard : ComponentBase
         // Render MudVirtualKeyboard
         builder.OpenComponent<MudVirtualKeyboard>(seq++);
         builder.AddAttribute(seq++, "ShowDecimalButton", true);
+        builder.AddAttribute(seq++, "ShowNegativeButton", true);
         builder.AddAttribute(seq++, "DecimalSeparator", ".");
         builder.AddAttribute(seq++, "DigitClicked", EventCallback.Factory.Create<int>(this, digit =>
         {
@@ -250,6 +318,26 @@ public class TestDecimalFieldWithKeyboard : ComponentBase
             if (!_currentText.Contains("."))
             {
                 _currentText += ".";
+            }
+            StateHasChanged();
+        }));
+        builder.AddAttribute(seq++, "NegativeClicked", EventCallback.Factory.Create(this, () =>
+        {
+            if (!string.IsNullOrEmpty(_currentText))
+            {
+                if (_currentText.StartsWith("-"))
+                {
+                    _currentText = _currentText[1..];
+                }
+                else
+                {
+                    _currentText = "-" + _currentText;
+                }
+                
+                if (decimal.TryParse(_currentText, out decimal result))
+                {
+                    _value = result;
+                }
             }
             StateHasChanged();
         }));
