@@ -1,0 +1,38 @@
+@namespace MudTextFieldNumbers
+@inherits MudBlazor.MudTextField<int?>
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        
+        // Override input type to text to support virtual keyboards
+        InputType = MudBlazor.InputType.Text;
+        
+        // Set input mode to numeric for mobile keyboards
+        InputMode = MudBlazor.InputMode.numeric;
+        
+        // Configure converter for integer values
+        Converter = new MudBlazor.Converter<int?>
+        {
+            SetFunc = value => value?.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            GetFunc = text =>
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                    return null;
+
+                // Remove any whitespace
+                text = text.Trim();
+
+                // Try to parse as integer
+                if (int.TryParse(text, System.Globalization.NumberStyles.Integer, 
+                    System.Globalization.CultureInfo.InvariantCulture, out int result))
+                {
+                    return result;
+                }
+
+                return null;
+            }
+        };
+    }
+}

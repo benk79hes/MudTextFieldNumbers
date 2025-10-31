@@ -1,0 +1,74 @@
+@namespace MudTextFieldNumbers
+@inherits MudBlazor.MudTextField<decimal?>
+
+@code {
+    /// <summary>
+    /// Number of decimal places to display and accept. Default is 2.
+    /// </summary>
+    [Parameter]
+    public int DecimalPlaces { get; set; } = 2;
+
+    /// <summary>
+    /// The decimal separator character. If not set, uses the current culture's decimal separator.
+    /// </summary>
+    [Parameter]
+    public string? DecimalSeparator { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        
+        // Override input type to text to support virtual keyboards
+        InputType = MudBlazor.InputType.Text;
+        
+        // Set input mode to decimal for mobile keyboards
+        InputMode = MudBlazor.InputMode.@decimal;
+        
+        // Get the decimal separator to use
+        var decimalSeparator = DecimalSeparator ?? 
+            System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+        
+        // Configure converter for decimal values
+        Converter = new MudBlazor.Converter<decimal?>
+        {
+            SetFunc = value =>
+            {
+                if (value == null)
+                    return null;
+
+                // Format with specified decimal places
+                var formatted = value.Value.ToString($"F{DecimalPlaces}", System.Globalization.CultureInfo.InvariantCulture);
+                
+                // Replace decimal separator if custom one is specified
+                if (decimalSeparator != ".")
+                {
+                    formatted = formatted.Replace(".", decimalSeparator);
+                }
+
+                return formatted;
+            },
+            GetFunc = text =>
+            {
+                if (string.IsNullOrWhiteSpace(text))
+                    return null;
+
+                // Remove any whitespace
+                text = text.Trim();
+
+                // Normalize decimal separator
+                var normalizedValue = text.Replace(decimalSeparator, ".");
+
+                // Try to parse as decimal
+                if (decimal.TryParse(normalizedValue, 
+                    System.Globalization.NumberStyles.AllowDecimalPoint | System.Globalization.NumberStyles.AllowLeadingSign,
+                    System.Globalization.CultureInfo.InvariantCulture, out decimal result))
+                {
+                    // Round to specified decimal places
+                    return Math.Round(result, DecimalPlaces);
+                }
+
+                return null;
+            }
+        };
+    }
+}

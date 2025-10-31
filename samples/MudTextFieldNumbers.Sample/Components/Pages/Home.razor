@@ -1,0 +1,106 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>MudTextFieldNumbers Demo</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">MudTextFieldNumbers Components</MudText>
+<MudText Class="mb-8">Components to handle integer and decimal input with MudTextField, compatible with virtual keyboards by avoiding input[type=number].</MudText>
+
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Integer Input</MudText>
+            <MudText Class="mb-4">Enter integer values. The component uses InputMode.numeric for better mobile keyboard support.</MudText>
+            
+            <MudTextFieldInteger @bind-Value="_integerValue" 
+                                Label="Integer Value" 
+                                Variant="Variant.Outlined" 
+                                HelperText="Enter an integer value" />
+            
+            <MudText Class="mt-4">Current value: @(_integerValue?.ToString() ?? "null")</MudText>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" sm="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Decimal Input</MudText>
+            <MudText Class="mb-4">Enter decimal values. The component uses InputMode.decimal for better mobile keyboard support.</MudText>
+            
+            <MudTextFieldDecimal @bind-Value="_decimalValue" 
+                                DecimalPlaces="2"
+                                Label="Decimal Value (2 places)" 
+                                Variant="Variant.Outlined" 
+                                HelperText="Enter a decimal value" />
+            
+            <MudText Class="mt-4">Current value: @(_decimalValue?.ToString("F2") ?? "null")</MudText>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" sm="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Decimal with Custom Separator</MudText>
+            <MudText Class="mb-4">Using comma as decimal separator.</MudText>
+            
+            <MudTextFieldDecimal @bind-Value="_decimalValueComma" 
+                                DecimalPlaces="3"
+                                DecimalSeparator=","
+                                Label="Decimal Value (comma separator)" 
+                                Variant="Variant.Outlined" 
+                                HelperText="Enter a decimal with comma (e.g., 12,345)" />
+            
+            <MudText Class="mt-4">Current value: @(_decimalValueComma?.ToString("F3") ?? "null")</MudText>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" sm="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Required Fields Example</MudText>
+            <MudText Class="mb-4">Fields with validation.</MudText>
+            
+            <MudTextFieldInteger @bind-Value="_requiredInteger" 
+                                Label="Required Integer" 
+                                Variant="Variant.Outlined" 
+                                Required="true"
+                                RequiredError="Integer value is required!" />
+            
+            <MudTextFieldDecimal @bind-Value="_requiredDecimal" 
+                                DecimalPlaces="2"
+                                Label="Required Decimal" 
+                                Variant="Variant.Outlined"
+                                Class="mt-4"
+                                Required="true"
+                                RequiredError="Decimal value is required!" />
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Benefits</MudText>
+            <MudList T="string">
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Uses text input instead of number input for better virtual keyboard compatibility</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Proper InputMode attribute for mobile keyboard optimization</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Automatic formatting and validation</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Configurable decimal places and separators</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Full MudBlazor TextField API support</MudText>
+                </MudListItem>
+            </MudList>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private int? _integerValue = 42;
+    private decimal? _decimalValue = 123.45m;
+    private decimal? _decimalValueComma = 99.999m;
+    private int? _requiredInteger;
+    private decimal? _requiredDecimal;
+}
