@@ -189,7 +189,7 @@ public class TestIntegerFieldWithKeyboard : ComponentBase
         {
             if (_currentText.Length > 0)
             {
-                _currentText = _currentText.Substring(0, _currentText.Length - 1);
+                _currentText = _currentText[..^1];
                 if (string.IsNullOrEmpty(_currentText))
                 {
                     _value = null;
@@ -257,7 +257,7 @@ public class TestDecimalFieldWithKeyboard : ComponentBase
         {
             if (_currentText.Length > 0)
             {
-                _currentText = _currentText.Substring(0, _currentText.Length - 1);
+                _currentText = _currentText[..^1];
                 if (string.IsNullOrEmpty(_currentText))
                 {
                     _value = null;
@@ -326,7 +326,7 @@ public class TestDecimalFieldWithKeyboardComma : ComponentBase
         {
             if (_currentText.Length > 0)
             {
-                _currentText = _currentText.Substring(0, _currentText.Length - 1);
+                _currentText = _currentText[..^1];
                 if (string.IsNullOrEmpty(_currentText))
                 {
                     _value = null;

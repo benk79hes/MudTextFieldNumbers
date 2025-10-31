@@ -134,7 +134,7 @@
     {
         if (_integerText.Length > 0)
         {
-            _integerText = _integerText.Substring(0, _integerText.Length - 1);
+            _integerText = _integerText[..^1];
             if (string.IsNullOrEmpty(_integerText))
             {
                 _integerValue = null;
@@ -181,7 +181,7 @@
     {
         if (_decimalText.Length > 0)
         {
-            _decimalText = _decimalText.Substring(0, _decimalText.Length - 1);
+            _decimalText = _decimalText[..^1];
             if (string.IsNullOrEmpty(_decimalText))
             {
                 _decimalValue = null;
@@ -229,7 +229,7 @@
     {
         if (_decimalCommaText.Length > 0)
         {
-            _decimalCommaText = _decimalCommaText.Substring(0, _decimalCommaText.Length - 1);
+            _decimalCommaText = _decimalCommaText[..^1];
             if (string.IsNullOrEmpty(_decimalCommaText))
             {
                 _decimalCommaValue = null;
