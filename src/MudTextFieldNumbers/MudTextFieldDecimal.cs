@@ -166,11 +166,7 @@ public class MudTextFieldDecimal : MudTextField<decimal?>, IVirtualKeyboardField
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && UseVirtualKeyboard && KeyboardService != null)
-        {
-            // Register focus/blur events through Adornment property which we can customize
-            // For now we'll handle this through an explicit API
-        }
+        // Future enhancement: Could add JS interop for advanced keyboard features
         return base.OnAfterRenderAsync(firstRender);
     }
 
@@ -198,6 +194,11 @@ public class MudTextFieldDecimal : MudTextField<decimal?>, IVirtualKeyboardField
 
     public void OnDigitInput(int digit)
     {
+        if (digit < 0 || digit > 9)
+        {
+            return; // Invalid digit, ignore
+        }
+        
         var decimalSeparator = DecimalSeparator ?? 
             System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
         var newText = _currentText + digit.ToString();

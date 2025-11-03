@@ -121,11 +121,7 @@ public class MudTextFieldInteger : MudTextField<int?>, IVirtualKeyboardField
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && UseVirtualKeyboard && KeyboardService != null)
-        {
-            // Register focus/blur events through Adornment property which we can customize
-            // For now we'll handle this through an explicit API
-        }
+        // Future enhancement: Could add JS interop for advanced keyboard features
         return base.OnAfterRenderAsync(firstRender);
     }
 
@@ -153,6 +149,11 @@ public class MudTextFieldInteger : MudTextField<int?>, IVirtualKeyboardField
 
     public void OnDigitInput(int digit)
     {
+        if (digit < 0 || digit > 9)
+        {
+            return; // Invalid digit, ignore
+        }
+        
         var newText = _currentText + digit.ToString();
         if (int.TryParse(newText, out int result))
         {
