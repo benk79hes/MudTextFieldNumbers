@@ -17,6 +17,9 @@ public class VirtualKeyboardIntegrationTests : TestContext
         // Register MudBlazor services
         Services.AddMudServices();
         
+        // Register VirtualKeyboardService
+        Services.AddSingleton<VirtualKeyboardService>();
+        
         // Setup JSInterop for MudBlazor components
         JSInterop.Mode = JSRuntimeMode.Loose;
     }

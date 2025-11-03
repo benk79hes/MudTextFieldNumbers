@@ -1,0 +1,117 @@
+@using Microsoft.AspNetCore.Components
+@using MudBlazor
+@inject VirtualKeyboardService KeyboardService
+@implements IDisposable
+
+@namespace MudTextFieldNumbers
+
+@* Only show keyboard when there's an active field *@
+@if (_activeField != null)
+{
+    <div class="mud-virtual-keyboard-manager @Class" style="@Style">
+        <MudVirtualKeyboard 
+            Title="@GetKeyboardTitle()"
+            ShowDecimalButton="@_activeField.SupportsDecimal"
+            ShowNegativeButton="@_activeField.SupportsNegative"
+            DecimalSeparator="@(_activeField.DecimalSeparator ?? ".")"
+            DigitClicked="@OnDigitClicked"
+            DecimalClicked="@OnDecimalClicked"
+            NegativeClicked="@OnNegativeClicked"
+            BackspaceClicked="@OnBackspaceClicked"
+            ClearClicked="@OnClearClicked"
+            Class="@KeyboardClass"
+            Style="@KeyboardStyle" />
+    </div>
+}
+
+@code {
+    private IVirtualKeyboardField? _activeField;
+
+    /// <summary>
+    /// Title to display on the keyboard. If not set, a default title based on keyboard type is used.
+    /// </summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>
+    /// Additional CSS class names to apply to the keyboard manager container.
+    /// </summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>
+    /// Additional inline styles to apply to the keyboard manager container.
+    /// </summary>
+    [Parameter]
+    public string? Style { get; set; }
+
+    /// <summary>
+    /// Additional CSS class names to apply to the keyboard itself.
+    /// </summary>
+    [Parameter]
+    public string? KeyboardClass { get; set; }
+
+    /// <summary>
+    /// Additional inline styles to apply to the keyboard itself.
+    /// </summary>
+    [Parameter]
+    public string? KeyboardStyle { get; set; }
+
+    protected override void OnInitialized()
+    {
+        KeyboardService.ActiveFieldChanged += OnActiveFieldChanged;
+        _activeField = KeyboardService.ActiveField;
+    }
+
+    private void OnActiveFieldChanged(object? sender, IVirtualKeyboardField? field)
+    {
+        _activeField = field;
+        StateHasChanged();
+    }
+
+    private string GetKeyboardTitle()
+    {
+        if (!string.IsNullOrEmpty(Title))
+        {
+            return Title;
+        }
+
+        return _activeField?.KeyboardType switch
+        {
+            VirtualKeyboardType.Numeric => "Numeric Keyboard",
+            VirtualKeyboardType.Decimal => "Decimal Keyboard",
+            VirtualKeyboardType.Text => "Text Keyboard",
+            _ => "Virtual Keyboard"
+        };
+    }
+
+    private void OnDigitClicked(int digit)
+    {
+        KeyboardService.SendDigit(digit);
+    }
+
+    private void OnDecimalClicked()
+    {
+        KeyboardService.SendDecimal();
+    }
+
+    private void OnNegativeClicked()
+    {
+        KeyboardService.SendNegativeToggle();
+    }
+
+    private void OnBackspaceClicked()
+    {
+        KeyboardService.SendBackspace();
+    }
+
+    private void OnClearClicked()
+    {
+        KeyboardService.SendClear();
+    }
+
+    public void Dispose()
+    {
+        KeyboardService.ActiveFieldChanged -= OnActiveFieldChanged;
+    }
+}

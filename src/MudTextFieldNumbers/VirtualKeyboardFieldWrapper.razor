@@ -1,0 +1,33 @@
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@inject VirtualKeyboardService? KeyboardService
+
+@namespace MudTextFieldNumbers
+
+<div @onfocusin="OnFocusIn" @onfocusout="OnFocusOut">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public IVirtualKeyboardField? Field { get; set; }
+
+    private void OnFocusIn(FocusEventArgs args)
+    {
+        if (KeyboardService != null && Field != null)
+        {
+            KeyboardService.SetActiveField(Field);
+        }
+    }
+
+    private void OnFocusOut(FocusEventArgs args)
+    {
+        if (KeyboardService != null && Field != null && KeyboardService.ActiveField == Field)
+        {
+            KeyboardService.ClearActiveField();
+        }
+    }
+}
