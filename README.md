@@ -8,6 +8,7 @@ Components to handle integer and decimal input with MudTextField, compatible wit
 
 ## Features
 
+- ✅ **Virtual Keyboard Component**: Includes MudVirtualKeyboard for on-screen numeric input
 - ✅ **Virtual Keyboard Compatible**: Uses text input instead of number input for better virtual keyboard compatibility on mobile devices
 - ✅ **Smart Input Mode**: Proper InputMode attribute for mobile keyboard optimization (numeric/decimal)
 - ✅ **Automatic Formatting**: Automatic formatting and validation of numeric values
@@ -47,6 +48,60 @@ Component for decimal input values with configurable decimal places and separato
                      Label="Decimal Value (comma)" 
                      Variant="Variant.Outlined" />
 ```
+
+### MudVirtualKeyboard
+
+A customizable on-screen numeric keyboard component for entering integer and decimal values.
+
+[![Virtual Keyboard Demo](https://github.com/user-attachments/assets/34ecbe8f-999d-4d03-93cd-625c75548b14)](https://github.com/benk79hes/MudTextFieldNumbers)
+
+**Features:**
+- 0-9 digit buttons
+- Optional decimal point button
+- Positive/negative toggle button (+/−)
+- Backspace and Clear functions
+- Customizable decimal separator (. or ,)
+- Integer or decimal mode
+- Event callbacks for all button clicks
+
+**Usage with Integer Field:**
+```razor
+<MudTextFieldInteger @bind-Value="_integerValue" 
+                    @bind-Text="_integerText"
+                    Label="Enter Value" />
+
+<MudVirtualKeyboard ShowDecimalButton="false"
+                  DigitClicked="@(digit => _integerText += digit)"
+                  BackspaceClicked="@(() => { /* handle backspace */ })"
+                  ClearClicked="@(() => { _integerText = ""; _integerValue = null; })" />
+```
+
+**Usage with Decimal Field:**
+```razor
+<MudTextFieldDecimal @bind-Value="_decimalValue"
+                    @bind-Text="_decimalText"
+                    DecimalPlaces="2"
+                    Label="Enter Amount" />
+
+<MudVirtualKeyboard ShowDecimalButton="true"
+                  DecimalSeparator="."
+                  DigitClicked="@(digit => _decimalText += digit)"
+                  DecimalClicked="@(() => { if (!_decimalText.Contains(".")) _decimalText += "."; })"
+                  BackspaceClicked="@(() => { /* handle backspace */ })"
+                  ClearClicked="@(() => { _decimalText = ""; _decimalValue = null; })" />
+```
+
+**Properties:**
+- `ShowDecimalButton` (bool): Show/hide the decimal separator button (default: true)
+- `ShowNegativeButton` (bool): Show/hide the +/− button for toggling positive/negative (default: true)
+- `DecimalSeparator` (string): Character for decimal separator (default: ".")
+- `Title` (string): Title displayed at the top of the keyboard
+- `DigitClicked` (EventCallback<int>): Fired when a digit button is clicked
+- `DecimalClicked` (EventCallback): Fired when the decimal separator button is clicked
+- `NegativeClicked` (EventCallback): Fired when the +/− button is clicked
+- `BackspaceClicked` (EventCallback): Fired when the backspace button is clicked
+- `ClearClicked` (EventCallback): Fired when the clear button is clicked
+
 
 ## Installation
 
