@@ -158,6 +158,10 @@ public class MudTextFieldDecimal : MudTextField<decimal?>, IVirtualKeyboardField
             }
             _currentText = formatted;
         }
+        else
+        {
+            _currentText = "";
+        }
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
@@ -194,12 +198,13 @@ public class MudTextFieldDecimal : MudTextField<decimal?>, IVirtualKeyboardField
 
     public void OnDigitInput(int digit)
     {
-        _currentText += digit.ToString();
         var decimalSeparator = DecimalSeparator ?? 
             System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-        var normalized = _currentText.Replace(decimalSeparator, ".");
+        var newText = _currentText + digit.ToString();
+        var normalized = newText.Replace(decimalSeparator, ".");
         if (decimal.TryParse(normalized, out decimal result))
         {
+            _currentText = newText;
             _ = SetTextAsync(_currentText);
         }
     }
@@ -227,7 +232,8 @@ public class MudTextFieldDecimal : MudTextField<decimal?>, IVirtualKeyboardField
     {
         if (_currentText.Length > 0)
         {
-            _currentText = _currentText[..^1];
+            var newText = _currentText[..^1];
+            _currentText = newText;
             _ = SetTextAsync(_currentText);
         }
     }
@@ -242,15 +248,32 @@ public class MudTextFieldDecimal : MudTextField<decimal?>, IVirtualKeyboardField
     {
         if (!string.IsNullOrEmpty(_currentText))
         {
+            var decimalSeparator = DecimalSeparator ?? 
+                System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            
+            string newText;
             if (_currentText.StartsWith("-"))
             {
-                _currentText = _currentText[1..];
+                newText = _currentText[1..];
             }
             else
             {
-                _currentText = "-" + _currentText;
+                newText = "-" + _currentText;
             }
-            _ = SetTextAsync(_currentText);
+            
+            // Validate the new text
+            var normalized = newText.Replace(decimalSeparator, ".");
+            if (decimal.TryParse(normalized, out decimal result) && result != 0)
+            {
+                _currentText = newText;
+                _ = SetTextAsync(_currentText);
+            }
+            else if (result == 0 && !newText.StartsWith("-"))
+            {
+                // Allow positive zero
+                _currentText = newText;
+                _ = SetTextAsync(_currentText);
+            }
         }
     }
 

@@ -113,6 +113,10 @@ public class MudTextFieldInteger : MudTextField<int?>, IVirtualKeyboardField
         {
             _currentText = Value.Value.ToString();
         }
+        else
+        {
+            _currentText = "";
+        }
     }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
@@ -149,9 +153,10 @@ public class MudTextFieldInteger : MudTextField<int?>, IVirtualKeyboardField
 
     public void OnDigitInput(int digit)
     {
-        _currentText += digit.ToString();
-        if (int.TryParse(_currentText, out int result))
+        var newText = _currentText + digit.ToString();
+        if (int.TryParse(newText, out int result))
         {
+            _currentText = newText;
             _ = SetTextAsync(_currentText);
         }
     }
@@ -165,7 +170,8 @@ public class MudTextFieldInteger : MudTextField<int?>, IVirtualKeyboardField
     {
         if (_currentText.Length > 0)
         {
-            _currentText = _currentText[..^1];
+            var newText = _currentText[..^1];
+            _currentText = newText;
             _ = SetTextAsync(_currentText);
         }
     }
@@ -180,15 +186,28 @@ public class MudTextFieldInteger : MudTextField<int?>, IVirtualKeyboardField
     {
         if (!string.IsNullOrEmpty(_currentText))
         {
+            string newText;
             if (_currentText.StartsWith("-"))
             {
-                _currentText = _currentText[1..];
+                newText = _currentText[1..];
             }
             else
             {
-                _currentText = "-" + _currentText;
+                newText = "-" + _currentText;
             }
-            _ = SetTextAsync(_currentText);
+            
+            // Only apply if it's a valid integer (and not just "-0")
+            if (int.TryParse(newText, out int result) && result != 0)
+            {
+                _currentText = newText;
+                _ = SetTextAsync(_currentText);
+            }
+            else if (result == 0 && !newText.StartsWith("-"))
+            {
+                // Allow positive zero
+                _currentText = newText;
+                _ = SetTextAsync(_currentText);
+            }
         }
     }
 
