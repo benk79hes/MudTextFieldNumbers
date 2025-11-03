@@ -206,6 +206,139 @@ Include MudBlazor resources in your `App.razor` or `index.html`:
 }
 ```
 
+## Virtual Keyboard - Automatic Integration
+
+The automatic integration approach allows you to have a single virtual keyboard that automatically connects to any focused field without manually wiring event callbacks.
+
+### Setup
+
+**1. Register the service in Program.cs:**
+
+```csharp
+using MudTextFieldNumbers;
+
+builder.Services.AddSingleton<VirtualKeyboardService>();
+```
+
+**2. Add the keyboard manager to your layout (e.g., MainLayout.razor footer):**
+
+```razor
+@* In your layout footer or wherever you want the keyboard to appear *@
+<MudContainer Class="mt-4" MaxWidth="MaxWidth.Medium">
+    <MudVirtualKeyboardManager />
+</MudContainer>
+```
+
+**3. Wrap your fields with VirtualKeyboardFieldWrapper:**
+
+```razor
+@inject VirtualKeyboardService KeyboardService
+
+<VirtualKeyboardFieldWrapper Field="@_quantityField">
+    <MudTextFieldInteger @ref="_quantityField"
+                        @bind-Value="_quantity"
+                        UseVirtualKeyboard="true"
+                        Label="Quantity" 
+                        Variant="Variant.Outlined" />
+</VirtualKeyboardFieldWrapper>
+
+<VirtualKeyboardFieldWrapper Field="@_priceField">
+    <MudTextFieldDecimal @ref="_priceField"
+                        @bind-Value="_price"
+                        UseVirtualKeyboard="true"
+                        DecimalPlaces="2"
+                        Label="Price" 
+                        Variant="Variant.Outlined" />
+</VirtualKeyboardFieldWrapper>
+
+@code {
+    private MudTextFieldInteger? _quantityField;
+    private MudTextFieldDecimal? _priceField;
+    private int? _quantity;
+    private decimal? _price;
+}
+```
+
+### Multiple Fields Example
+
+```razor
+@page "/order-form"
+@rendermode InteractiveServer
+
+<MudGrid>
+    <MudItem xs="12" md="6">
+        <VirtualKeyboardFieldWrapper Field="@_field1">
+            <MudTextFieldInteger @ref="_field1"
+                                @bind-Value="_quantity"
+                                UseVirtualKeyboard="true"
+                                Label="Quantity"
+                                Variant="Variant.Outlined" />
+        </VirtualKeyboardFieldWrapper>
+    </MudItem>
+    
+    <MudItem xs="12" md="6">
+        <VirtualKeyboardFieldWrapper Field="@_field2">
+            <MudTextFieldDecimal @ref="_field2"
+                                @bind-Value="_unitPrice"
+                                UseVirtualKeyboard="true"
+                                DecimalPlaces="2"
+                                Label="Unit Price"
+                                Variant="Variant.Outlined" />
+        </VirtualKeyboardFieldWrapper>
+    </MudItem>
+    
+    <MudItem xs="12" md="6">
+        <VirtualKeyboardFieldWrapper Field="@_field3">
+            <MudTextFieldDecimal @ref="_field3"
+                                @bind-Value="_taxRate"
+                                UseVirtualKeyboard="true"
+                                DecimalPlaces="2"
+                                Label="Tax Rate (%)"
+                                Variant="Variant.Outlined" />
+        </VirtualKeyboardFieldWrapper>
+    </MudItem>
+</MudGrid>
+
+@* Keyboard appears in layout footer automatically *@
+
+@code {
+    private MudTextFieldInteger? _field1;
+    private MudTextFieldDecimal? _field2;
+    private MudTextFieldDecimal? _field3;
+    
+    private int? _quantity;
+    private decimal? _unitPrice;
+    private decimal? _taxRate;
+}
+```
+
+### Benefits of Automatic Integration
+
+- **Zero Event Wiring**: No need to manually wire up `DigitClicked`, `BackspaceClicked`, etc.
+- **Single Keyboard**: One keyboard instance serves all fields throughout your application
+- **Automatic Adaptation**: Keyboard automatically shows/hides decimal button based on field type
+- **Focus Management**: Keyboard appears when field is focused, hides when blurred
+- **Flexible Placement**: Place the keyboard manager anywhere (footer, modal, sidebar, etc.)
+- **Per-Field Configuration**: Each field can have its own settings (decimal places, separator, etc.)
+
+### Customizing the Keyboard Manager
+
+```razor
+<MudVirtualKeyboardManager 
+    Title="Enter Value"
+    KeyboardClass="custom-keyboard-style"
+    KeyboardStyle="max-width: 400px; margin: 0 auto;" />
+```
+
+**Available Parameters:**
+- `Title`: Custom title (default is based on field type)
+- `Class`: CSS class for the container
+- `Style`: Inline styles for the container
+- `KeyboardClass`: CSS class for the keyboard itself
+- `KeyboardStyle`: Inline styles for the keyboard itself
+
+
+
 ## Advanced Customization
 
 Both components inherit from `MudTextField`, so all MudTextField properties are available:

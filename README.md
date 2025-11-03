@@ -63,6 +63,58 @@ A customizable on-screen numeric keyboard component for entering integer and dec
 - Customizable decimal separator (. or ,)
 - Integer or decimal mode
 - Event callbacks for all button clicks
+- **NEW: Automatic integration with VirtualKeyboardService**
+
+#### Automatic Integration (Recommended)
+
+The easiest way to use the virtual keyboard is with automatic integration. A single keyboard in your footer automatically connects to any field that receives focus.
+
+**Step 1: Register the service in Program.cs:**
+```csharp
+using MudTextFieldNumbers;
+
+builder.Services.AddSingleton<VirtualKeyboardService>();
+```
+
+**Step 2: Add the keyboard manager to your layout (e.g., in MainLayout.razor):**
+```razor
+<MudVirtualKeyboardManager />
+```
+
+**Step 3: Wrap your fields and enable automatic connection:**
+```razor
+<VirtualKeyboardFieldWrapper Field="@_integerField">
+    <MudTextFieldInteger @ref="_integerField"
+                        @bind-Value="_value"
+                        UseVirtualKeyboard="true"
+                        Label="Enter Value" />
+</VirtualKeyboardFieldWrapper>
+
+<VirtualKeyboardFieldWrapper Field="@_decimalField">
+    <MudTextFieldDecimal @ref="_decimalField"
+                        @bind-Value="_price"
+                        UseVirtualKeyboard="true"
+                        DecimalPlaces="2"
+                        Label="Enter Price" />
+</VirtualKeyboardFieldWrapper>
+
+@code {
+    private MudTextFieldInteger? _integerField;
+    private MudTextFieldDecimal? _decimalField;
+    private int? _value;
+    private decimal? _price;
+}
+```
+
+**Benefits:**
+- ✅ Zero manual event wiring
+- ✅ Single keyboard serves all fields
+- ✅ Keyboard automatically adapts to field type (integer/decimal)
+- ✅ Shows/hides automatically on focus/blur
+
+#### Manual Integration
+
+For advanced scenarios or manual control, you can still wire up the keyboard manually:
 
 **Usage with Integer Field:**
 ```razor
@@ -101,6 +153,20 @@ A customizable on-screen numeric keyboard component for entering integer and dec
 - `NegativeClicked` (EventCallback): Fired when the +/− button is clicked
 - `BackspaceClicked` (EventCallback): Fired when the backspace button is clicked
 - `ClearClicked` (EventCallback): Fired when the clear button is clicked
+
+### VirtualKeyboardService
+
+Service for coordinating automatic keyboard integration across your application.
+
+**Registration:**
+```csharp
+builder.Services.AddSingleton<VirtualKeyboardService>();
+```
+
+**Key Components:**
+- `MudVirtualKeyboardManager`: Component that renders the keyboard and automatically connects to active fields
+- `VirtualKeyboardFieldWrapper`: Helper component that handles focus/blur events for automatic field registration
+- `IVirtualKeyboardField`: Interface implemented by field components
 
 
 ## Installation
