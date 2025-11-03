@@ -1,0 +1,86 @@
+@using Microsoft.JSInterop
+@namespace MudTextFieldNumbers
+
+@using MudBlazor
+@using MudBlazor.Utilities
+@using static MudBlazor.Icons
+
+@if (_visible)
+{
+    <!-- Android-like keyboard positioning -->
+    <div style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 4000; background: white; border-top: 1px solid #e0e0e0; box-shadow: 0 -4px 20px rgba(0,0,0,0.15);">
+        <!-- Close button with centered icon -->
+        <div style="position: absolute; top: 8px; right: 8px; z-index: 4001;">
+            <MudIconButton Icon="@Icons.Material.Filled.Close" 
+                      Color="Color.Error" 
+                      Size="Size.Large"
+                      Variant="Variant.Filled"
+                      Style="width: 60px; height: 60px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center;"
+                      OnClick="CloseKeyboard"
+                      >
+            </MudIconButton>
+        </div>
+        <MudPaper Class="pa-4" Elevation="0" Style="background: white; border-radius: 0;">
+            <MudGrid Spacing="2">
+            <MudItem xs="12" Class="d-flex justify-center">
+                @foreach (var key in _keys[0])
+                {
+                    <MudButton Variant="Variant.Filled" 
+                              Class="ma-3" 
+                              Style="min-width: 60px; height: 60px; font-size: 24px; border-radius: 8px; font-weight: 700; text-transform: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" 
+                              Color="Color.Primary" 
+                              OnClick="() => SendKey(key)">@key</MudButton>
+                }
+                <MudButton Variant="Variant.Filled" 
+                          Color="Color.Warning" 
+                          Class="ma-2" 
+                          Style="min-width: 55px; height: 60px; font-size: 24px; border-radius: 8px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" 
+                          OnClick='() => SendKey("Backspace")'>⌫</MudButton>
+            </MudItem>
+            
+            <MudItem xs="12" Class="d-flex justify-center">
+                @foreach (var key in _keys[1])
+                {
+                    <MudButton Variant="Variant.Filled" 
+                              Class="ma-3" 
+                              Style="min-width: 60px; height: 60px; font-size: 24px;border-radius: 8px; font-weight: 700; text-transform: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" 
+                              Color="Color.Primary" 
+                              OnClick="() => SendKey(GetTransformedKey(key))">@GetTransformedKey(key)</MudButton>
+                }
+                <MudButton Variant="Variant.Filled" 
+                          Color="Color.Success" 
+                          Class="ma-3" 
+                          Style="min-width: 55px; height: 60px; font-size: 24px; border-radius: 8px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" 
+                          OnClick='() => SendKey("Enter")'>⏎</MudButton>
+            </MudItem>
+            
+            <MudItem xs="12" Class="d-flex justify-center">
+                <MudButton Variant="@(_capsLock ? Variant.Filled : Variant.Outlined)" 
+                          Color="@(_capsLock ? Color.Warning : Color.Default)" 
+                          Class="ma-3" 
+                          Style="min-width: 65px; height: 60px; font-size: 24px; border-radius: 8px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" 
+                          OnClick="ToggleCapsLock">⇪</MudButton>
+                @foreach (var key in _keys[2])
+                {
+                    <MudButton Variant="Variant.Filled" 
+                              Class="ma-3" 
+                              Style="min-width: 60px; height: 60px; font-size: 24px; border-radius: 8px; font-weight: 700; text-transform: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" 
+                              Color="Color.Primary" 
+                              OnClick="() => SendKey(GetTransformedKey(key))">@GetTransformedKey(key)</MudButton>
+                }
+            </MudItem>
+            
+            <MudItem xs="12" Class="d-flex justify-center">
+                @foreach (var key in _keys[3])
+                {
+                    <MudButton Variant="Variant.Filled" 
+                              Class="ma-3" 
+                              Style="min-width: 60px; height: 60px; font-size: 24px; border-radius: 8px; font-weight: 700; text-transform: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" 
+                              Color="Color.Primary" 
+                              OnClick="() => SendKey(GetTransformedKey(key))">@GetTransformedKey(key)</MudButton>
+                }
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+    </div>
+}

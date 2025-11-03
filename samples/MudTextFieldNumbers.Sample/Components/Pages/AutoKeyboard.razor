@@ -1,0 +1,111 @@
+@page "/auto-keyboard"
+@rendermode InteractiveServer
+
+<PageTitle>Auto Virtual Keyboard Demo</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Auto Virtual Keyboard Demo</MudText>
+<MudText Class="mb-8">This page demonstrates the automatic virtual keyboard that appears when you click on any input field.</MudText>
+
+<MudGrid>
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Text Input Fields</MudText>
+            <MudText Class="mb-4">Click on any field below to see the virtual keyboard automatically appear.</MudText>
+            
+            <MudTextField @bind-Value="_firstName" 
+                         Label="First Name" 
+                         Variant="Variant.Outlined"
+                         Class="mb-4" />
+            
+            <MudTextField @bind-Value="_lastName" 
+                         Label="Last Name" 
+                         Variant="Variant.Outlined"
+                         Class="mb-4" />
+            
+            <MudTextField @bind-Value="_email" 
+                         Label="Email" 
+                         Variant="Variant.Outlined"
+                         InputType="InputType.Email"
+                         Class="mb-4" />
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Numeric Input Fields</MudText>
+            <MudText Class="mb-4">The virtual keyboard works great with numeric fields.</MudText>
+            
+            <MudTextFieldInteger @bind-Value="_age" 
+                                Label="Age" 
+                                Variant="Variant.Outlined"
+                                Class="mb-4" />
+            
+            <MudTextFieldDecimal @bind-Value="_price" 
+                                DecimalPlaces="2"
+                                Label="Price" 
+                                Variant="Variant.Outlined"
+                                Class="mb-4" />
+            
+            <MudTextFieldDecimal @bind-Value="_quantity" 
+                                DecimalPlaces="3"
+                                DecimalSeparator=","
+                                Label="Quantity (comma separator)" 
+                                Variant="Variant.Outlined"
+                                Class="mb-4" />
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Current Values</MudText>
+            
+            <MudText Class="mb-2"><strong>First Name:</strong> @(_firstName ?? "not set")</MudText>
+            <MudText Class="mb-2"><strong>Last Name:</strong> @(_lastName ?? "not set")</MudText>
+            <MudText Class="mb-2"><strong>Email:</strong> @(_email ?? "not set")</MudText>
+            <MudText Class="mb-2"><strong>Age:</strong> @(_age?.ToString() ?? "not set")</MudText>
+            <MudText Class="mb-2"><strong>Price:</strong> @(_price?.ToString("F2") ?? "not set")</MudText>
+            <MudText Class="mb-2"><strong>Quantity:</strong> @(_quantity?.ToString("F3") ?? "not set")</MudText>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Features</MudText>
+            <MudList T="string" Dense="true">
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Automatically shows when you focus on any input</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Automatically hides when you click outside inputs</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>QWERTZ keyboard layout with numbers and letters</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Caps Lock toggle for uppercase/lowercase</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Backspace and Enter key support</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Android-like positioning and behavior</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Smart decimal handling for numeric fields</MudText>
+                </MudListItem>
+            </MudList>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+<!-- Add the VirtualKeyboard component - it will auto-show/hide -->
+<VirtualKeyboard />
+
+@code {
+    private string? _firstName;
+    private string? _lastName;
+    private string? _email;
+    private int? _age;
+    private decimal? _price;
+    private decimal? _quantity;
+}
