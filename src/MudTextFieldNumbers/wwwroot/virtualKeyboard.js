@@ -227,20 +227,32 @@ window.virtualKeyboard = {
             } else if ((key === '.' || key === ',') && isNumericField) {
                 // Handle decimal point/comma for numeric fields
                 
-                if (!currentValue.includes('.') && !currentValue.includes(',')) {
+                // Check if current value already has a decimal separator
+                const hasDecimalDot = currentValue.includes('.');
+                const hasDecimalComma = currentValue.includes(',');
+                
+                // Check if the current value is auto-formatted with trailing zeros (e.g., "1,000" or "1.000")
+                // If so, replace it with the user's decimal input
+                const autoFormattedPattern = /^(\d+)[.,]0+$/;
+                const match = currentValue.match(autoFormattedPattern);
+                
+                if (match && (hasDecimalDot || hasDecimalComma)) {
+                    // Remove the auto-formatted decimal part and add user's decimal separator
+                    newValue = match[1] + key;
+                    newCursorPos = newValue.length;
+                } else if (!hasDecimalDot && !hasDecimalComma) {
                     if (el.type === 'number') {
                         // For number inputs, don't add a trailing decimal point
                         // Instead, store the intent to add decimal and wait for next digit
                         el.dataset.pendingDecimal = 'true';
                         return; // Don't update the value yet
                     } else {
-                        // For MudNumericField (text-based), append at the end since we forced cursor position
-                        const decimalChar = '.'; // Always use dot for consistency
-                        newValue = currentValue + decimalChar;
+                        // For MudNumericField (text-based), use the actual key pressed (respects field's decimal separator)
+                        newValue = currentValue + key;
                         newCursorPos = newValue.length;
                     }
                 } else {
-                    return; // Don't add another decimal separator
+                    return; // Already has a user-entered decimal value, don't add another
                 }
             } else {
                 // For non-numeric characters or non-numeric fields
