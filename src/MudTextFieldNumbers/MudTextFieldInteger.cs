@@ -40,6 +40,12 @@ public class MudTextFieldInteger : MudTextField<int?>, IVirtualKeyboardField
     /// </summary>
     [Parameter]
     public bool UseVirtualKeyboard { get; set; } = false;
+    
+    /// <summary>
+    /// Cascading parameter from VirtualKeyboardFieldWrapper.
+    /// </summary>
+    [CascadingParameter]
+    private VirtualKeyboardFieldWrapper? Wrapper { get; set; }
 
     /// <summary>
     /// Gets the type of keyboard for this field.
@@ -119,10 +125,27 @@ public class MudTextFieldInteger : MudTextField<int?>, IVirtualKeyboardField
         }
     }
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // Future enhancement: Could add JS interop for advanced keyboard features
-        return base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender);
+        
+        // Field will be registered when it receives focus through HandleFocus()
+    }
+    
+    public void HandleFocus()
+    {
+        if (UseVirtualKeyboard && Wrapper != null)
+        {
+            Wrapper.NotifyFocusIn();
+        }
+    }
+    
+    public void HandleBlur()
+    {
+        if (UseVirtualKeyboard && Wrapper != null)
+        {
+            Wrapper.NotifyFocusOut();
+        }
     }
 
     /// <summary>

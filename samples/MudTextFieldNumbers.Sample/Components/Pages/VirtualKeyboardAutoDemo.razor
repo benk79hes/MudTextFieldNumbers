@@ -13,12 +13,14 @@
     <MudItem xs="12" md="6">
         <MudPaper Class="pa-4">
             <MudText Typo="Typo.h5" GutterBottom="true">Multiple Fields - Shared Keyboard</MudText>
-            <MudText Class="mb-4">Click any field below and the keyboard will automatically connect to it.</MudText>
+            <MudText Class="mb-4">Click any field below and the keyboard will automatically appear at the bottom of the screen.</MudText>
             
             <VirtualKeyboardFieldWrapper Field="@_integerField1">
                 <MudTextFieldInteger @ref="_integerField1"
                                     @bind-Value="_integerValue1"
                                     UseVirtualKeyboard="true"
+                                    @onfocus="(() => _integerField1?.HandleFocus())"
+                                    @onblur="(() => _integerField1?.HandleBlur())"
                                     Label="Integer Field 1" 
                                     Variant="Variant.Outlined"
                                     Class="mb-3" />
@@ -28,6 +30,8 @@
                 <MudTextFieldInteger @ref="_integerField2"
                                     @bind-Value="_integerValue2"
                                     UseVirtualKeyboard="true"
+                                    @onfocus="(() => _integerField2?.HandleFocus())"
+                                    @onblur="(() => _integerField2?.HandleBlur())"
                                     Label="Integer Field 2" 
                                     Variant="Variant.Outlined"
                                     Class="mb-3" />
@@ -37,6 +41,8 @@
                 <MudTextFieldDecimal @ref="_decimalField1"
                                     @bind-Value="_decimalValue1"
                                     UseVirtualKeyboard="true"
+                                    @onfocus="(() => _decimalField1?.HandleFocus())"
+                                    @onblur="(() => _decimalField1?.HandleBlur())"
                                     DecimalPlaces="2"
                                     Label="Decimal Field (Price)" 
                                     Variant="Variant.Outlined"
@@ -47,6 +53,8 @@
                 <MudTextFieldDecimal @ref="_decimalField2"
                                     @bind-Value="_decimalValue2"
                                     UseVirtualKeyboard="true"
+                                    @onfocus="(() => _decimalField2?.HandleFocus())"
+                                    @onblur="(() => _decimalField2?.HandleBlur())"
                                     DecimalPlaces="3"
                                     DecimalSeparator=","
                                     Label="Decimal Field (Weight kg)" 
@@ -92,7 +100,7 @@
                 1. <strong>Service Registration</strong>: Add <code>services.AddSingleton&lt;VirtualKeyboardService&gt;()</code> to your Program.cs
             </MudText>
             <MudText Typo="Typo.body2" Class="mb-2">
-                2. <strong>Keyboard Manager</strong>: Place <code>&lt;MudVirtualKeyboardManager /&gt;</code> in your layout footer
+                2. <strong>Keyboard Manager</strong>: Place <code>&lt;MudVirtualKeyboardManager /&gt;</code> in your MainLayout (see this demo!)
             </MudText>
             <MudText Typo="Typo.body2" Class="mb-2">
                 3. <strong>Wrap Fields</strong>: Wrap fields with <code>&lt;VirtualKeyboardFieldWrapper&gt;</code>
@@ -101,18 +109,11 @@
                 4. <strong>Enable Auto-Connect</strong>: Set <code>UseVirtualKeyboard="true"</code> on fields
             </MudText>
             <MudText Typo="Typo.body2">
-                5. <strong>Done!</strong> The keyboard automatically appears and adapts to each field
+                5. <strong>Done!</strong> The keyboard automatically appears at the bottom and adapts to each field
             </MudText>
         </MudPaper>
     </MudItem>
 </MudGrid>
-
-@* Virtual Keyboard Manager - Always placed in footer *@
-<MudContainer Class="mt-16" MaxWidth="MaxWidth.Medium">
-    <MudPaper Elevation="8" Class="pa-4">
-        <MudVirtualKeyboardManager Title="Automatic Keyboard" />
-    </MudPaper>
-</MudContainer>
 
 @code {
     // Field references
