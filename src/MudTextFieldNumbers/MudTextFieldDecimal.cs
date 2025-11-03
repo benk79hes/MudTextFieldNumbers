@@ -17,6 +17,7 @@ namespace MudTextFieldNumbers;
 /// - Configurable decimal separator (e.g., comma or dot)
 /// - Automatic validation and formatting
 /// - Supports all MudTextField properties and events
+/// - Deferred formatting: formats with trailing zeros only on blur, not during typing
 /// 
 /// Usage:
 /// <![CDATA[<MudTextFieldDecimal @bind-Value="myDecimalValue" DecimalPlaces="2" Label="Enter amount" />]]>
@@ -39,6 +40,8 @@ public class MudTextFieldDecimal : MudTextField<decimal?>
     [Parameter]
     public string? DecimalSeparator { get; set; }
 
+    private string _decimalSeparator = ".";
+
     /// <summary>
     /// Initializes the component with proper settings for decimal input.
     /// Configures the input type as text with decimal input mode and sets up
@@ -56,10 +59,12 @@ public class MudTextFieldDecimal : MudTextField<decimal?>
         InputMode = InputMode.@decimal;
         
         // Get the decimal separator to use
-        var decimalSeparator = DecimalSeparator ?? 
+        _decimalSeparator = DecimalSeparator ?? 
             System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
         
         // Configure converter for decimal values
+        // Note: During typing (when focused), we don't add trailing zeros
+        // This is handled by not formatting the display value - we just display what the user types
         Converter = new Converter<decimal?>
         {
             SetFunc = value =>
@@ -67,13 +72,13 @@ public class MudTextFieldDecimal : MudTextField<decimal?>
                 if (value == null)
                     return null;
 
-                // Format with specified decimal places
+                // Format with specified decimal places (used when not focused/on blur)
                 var formatted = value.Value.ToString($"F{DecimalPlaces}", System.Globalization.CultureInfo.InvariantCulture);
                 
                 // Replace decimal separator if custom one is specified
-                if (decimalSeparator != ".")
+                if (_decimalSeparator != ".")
                 {
-                    formatted = formatted.Replace(".", decimalSeparator);
+                    formatted = formatted.Replace(".", _decimalSeparator);
                 }
 
                 return formatted;
@@ -87,7 +92,7 @@ public class MudTextFieldDecimal : MudTextField<decimal?>
                 text = text.Trim();
 
                 // Normalize decimal separator
-                var normalizedValue = text.Replace(decimalSeparator, ".");
+                var normalizedValue = text.Replace(_decimalSeparator, ".");
 
                 // Try to parse as decimal
                 if (decimal.TryParse(normalizedValue, 
@@ -101,5 +106,9 @@ public class MudTextFieldDecimal : MudTextField<decimal?>
                 return null;
             }
         };
+        
+        // Set Immediate to false to defer value conversion until blur
+        // This prevents auto-formatting with trailing zeros during typing
+        Immediate = false;
     }
 }

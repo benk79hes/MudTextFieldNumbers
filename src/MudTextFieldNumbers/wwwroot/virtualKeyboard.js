@@ -231,16 +231,7 @@ window.virtualKeyboard = {
                 const hasDecimalDot = currentValue.includes('.');
                 const hasDecimalComma = currentValue.includes(',');
                 
-                // Check if the current value is auto-formatted with trailing zeros (e.g., "1,000" or "1.000")
-                // If so, replace it with the user's decimal input
-                const autoFormattedPattern = /^(\d+)[.,]0+$/;
-                const match = currentValue.match(autoFormattedPattern);
-                
-                if (match && (hasDecimalDot || hasDecimalComma)) {
-                    // Remove the auto-formatted decimal part and add user's decimal separator
-                    newValue = match[1] + key;
-                    newCursorPos = newValue.length;
-                } else if (!hasDecimalDot && !hasDecimalComma) {
+                if (!hasDecimalDot && !hasDecimalComma) {
                     if (el.type === 'number') {
                         // For number inputs, don't add a trailing decimal point
                         // Instead, store the intent to add decimal and wait for next digit
@@ -252,7 +243,7 @@ window.virtualKeyboard = {
                         newCursorPos = newValue.length;
                     }
                 } else {
-                    return; // Already has a user-entered decimal value, don't add another
+                    return; // Already has a decimal separator, don't add another
                 }
             } else {
                 // For non-numeric characters or non-numeric fields
