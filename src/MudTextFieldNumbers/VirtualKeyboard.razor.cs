@@ -10,7 +10,7 @@ namespace MudTextFieldNumbers;
 /// <summary>
 /// Virtual keyboard component for MudBlazor input fields.
 /// </summary>
-public partial class VirtualKeyboard : ComponentBase
+public partial class VirtualKeyboard : ComponentBase, IDisposable
 {
     [Inject]
     private IJSRuntime JS { get; set; } = null!;
@@ -26,6 +26,11 @@ public partial class VirtualKeyboard : ComponentBase
     private bool _capsLock = false;
 
     /// <summary>
+    /// Reference to this component for JS interop callbacks.
+    /// </summary>
+    private DotNetObjectReference<VirtualKeyboard>? _dotNetRef;
+
+    /// <summary>
     /// Registers JS callbacks for showing and hiding the keyboard on first render.
     /// </summary>
     /// <param name="firstRender">True if this is the first render.</param>
@@ -34,14 +39,17 @@ public partial class VirtualKeyboard : ComponentBase
     {
         if (firstRender)
         {
+            // Create and store reference for disposal
+            _dotNetRef = DotNetObjectReference.Create(this);
+            
             // Register JS callbacks to show/hide the keyboard
             await JS.InvokeVoidAsync(
                 "virtualKeyboard.registerShowCallback",
-                DotNetObjectReference.Create(this),
+                _dotNetRef,
                 nameof(ShowKeyboard));
             await JS.InvokeVoidAsync(
                 "virtualKeyboard.registerHideCallback",
-                DotNetObjectReference.Create(this),
+                _dotNetRef,
                 nameof(HideKeyboard));
         }
     }
@@ -50,7 +58,7 @@ public partial class VirtualKeyboard : ComponentBase
     /// JS-invokable method to show the keyboard.
     /// </summary>
     [JSInvokable]
-    public async void ShowKeyboard()
+    public async Task ShowKeyboard()
     {
         _visible = true;
         StateHasChanged();
@@ -63,7 +71,7 @@ public partial class VirtualKeyboard : ComponentBase
     /// JS-invokable method to hide the keyboard.
     /// </summary>
     [JSInvokable]
-    public async void HideKeyboard()
+    public async Task HideKeyboard()
     {
         _visible = false;
         StateHasChanged();
@@ -75,9 +83,9 @@ public partial class VirtualKeyboard : ComponentBase
     /// <summary>
     /// Closes the virtual keyboard when the close button is clicked.
     /// </summary>
-    private void CloseKeyboard()
+    private async Task CloseKeyboard()
     {
-        HideKeyboard();
+        await HideKeyboard();
     }
 
     /// <summary>
@@ -123,5 +131,13 @@ public partial class VirtualKeyboard : ComponentBase
         }
 
         return key;
+    }
+
+    /// <summary>
+    /// Disposes the component and releases resources.
+    /// </summary>
+    public void Dispose()
+    {
+        _dotNetRef?.Dispose();
     }
 }

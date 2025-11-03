@@ -34,9 +34,13 @@ window.virtualKeyboard = {
             if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) {
                 window.virtualKeyboard.currentTarget = el;
                 if (window.virtualKeyboard.showCallback) {
-                    window.virtualKeyboard.showCallback.invokeMethodAsync('ShowKeyboard');
-                    // Android-like behavior: scroll input into view
-                    window.virtualKeyboard.scrollInputIntoView(el);
+                    try {
+                        window.virtualKeyboard.showCallback.invokeMethodAsync('ShowKeyboard');
+                        // Android-like behavior: scroll input into view
+                        window.virtualKeyboard.scrollInputIntoView(el);
+                    } catch (error) {
+                        console.error('Error showing virtual keyboard:', error);
+                    }
                 }
             }
         });
@@ -64,7 +68,11 @@ window.virtualKeyboard = {
                 // Close only if it's neither a keyboard element nor an input
                 if (!isVirtualKeyboardElement && !isInputElement) {
                     if (window.virtualKeyboard.hideCallback) {
-                        window.virtualKeyboard.hideCallback.invokeMethodAsync('HideKeyboard');
+                        try {
+                            window.virtualKeyboard.hideCallback.invokeMethodAsync('HideKeyboard');
+                        } catch (error) {
+                            console.error('Error hiding virtual keyboard:', error);
+                        }
                     }
                     // Reset scroll position when keyboard closes
                     window.virtualKeyboard.resetScroll();
