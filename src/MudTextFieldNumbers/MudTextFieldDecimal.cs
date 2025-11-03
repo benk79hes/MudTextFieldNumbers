@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
 
 namespace MudTextFieldNumbers;
@@ -17,13 +18,17 @@ namespace MudTextFieldNumbers;
 /// - Configurable decimal separator (e.g., comma or dot)
 /// - Automatic validation and formatting
 /// - Supports all MudTextField properties and events
+/// - Optional automatic integration with VirtualKeyboardService
 /// 
 /// Usage:
 /// <![CDATA[<MudTextFieldDecimal @bind-Value="myDecimalValue" DecimalPlaces="2" Label="Enter amount" />]]>
 /// <![CDATA[<MudTextFieldDecimal @bind-Value="myDecimalValue" DecimalPlaces="3" DecimalSeparator="," Label="Prix" />]]>
+/// <![CDATA[<MudTextFieldDecimal @bind-Value="myDecimalValue" UseVirtualKeyboard="true" Label="Enter amount" />]]>
 /// </summary>
-public class MudTextFieldDecimal : MudTextField<decimal?>
+public class MudTextFieldDecimal : MudTextField<decimal?>, IVirtualKeyboardField
 {
+    private string _currentText = "";
+
     /// <summary>
     /// Number of decimal places to display and accept. Default is 2.
     /// The value will be automatically rounded to this number of decimal places.
@@ -38,6 +43,42 @@ public class MudTextFieldDecimal : MudTextField<decimal?>
     /// </summary>
     [Parameter]
     public string? DecimalSeparator { get; set; }
+
+    /// <summary>
+    /// Optional VirtualKeyboardService for automatic keyboard integration.
+    /// If provided and UseVirtualKeyboard is true, the field will automatically
+    /// connect to the virtual keyboard service on focus.
+    /// </summary>
+    [Inject]
+    private VirtualKeyboardService? KeyboardService { get; set; }
+
+    /// <summary>
+    /// When true, automatically connects to the VirtualKeyboardService (if available).
+    /// Default is false for backward compatibility.
+    /// </summary>
+    [Parameter]
+    public bool UseVirtualKeyboard { get; set; } = false;
+    
+    /// <summary>
+    /// Cascading parameter from VirtualKeyboardFieldWrapper.
+    /// </summary>
+    [CascadingParameter]
+    private VirtualKeyboardFieldWrapper? Wrapper { get; set; }
+
+    /// <summary>
+    /// Gets the type of keyboard for this field.
+    /// </summary>
+    public VirtualKeyboardType KeyboardType => VirtualKeyboardType.Decimal;
+
+    /// <summary>
+    /// Gets whether this field supports decimal input (true).
+    /// </summary>
+    public bool SupportsDecimal => true;
+
+    /// <summary>
+    /// Gets whether this field supports negative values (true).
+    /// </summary>
+    public bool SupportsNegative => true;
 
     /// <summary>
     /// Initializes the component with proper settings for decimal input.
@@ -101,5 +142,167 @@ public class MudTextFieldDecimal : MudTextField<decimal?>
                 return null;
             }
         };
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        
+        // Sync current text with Text property
+        if (!string.IsNullOrEmpty(Text))
+        {
+            _currentText = Text;
+        }
+        else if (Value.HasValue)
+        {
+            var decimalSeparator = DecimalSeparator ?? 
+                System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            var formatted = Value.Value.ToString($"F{DecimalPlaces}", System.Globalization.CultureInfo.InvariantCulture);
+            if (decimalSeparator != ".")
+            {
+                formatted = formatted.Replace(".", decimalSeparator);
+            }
+            _currentText = formatted;
+        }
+        else
+        {
+            _currentText = "";
+        }
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        
+        // Field will be registered when it receives focus through HandleFocus()
+    }
+    
+    public void HandleFocus()
+    {
+        if (UseVirtualKeyboard && Wrapper != null)
+        {
+            Wrapper.NotifyFocusIn();
+        }
+    }
+    
+    public void HandleBlur()
+    {
+        if (UseVirtualKeyboard && Wrapper != null)
+        {
+            Wrapper.NotifyFocusOut();
+        }
+    }
+
+    /// <summary>
+    /// Call this method to register the field with the keyboard service (e.g., on focus).
+    /// </summary>
+    public void RegisterWithKeyboard()
+    {
+        if (UseVirtualKeyboard && KeyboardService != null)
+        {
+            KeyboardService.SetActiveField(this);
+        }
+    }
+
+    /// <summary>
+    /// Call this method to unregister the field from the keyboard service (e.g., on blur).
+    /// </summary>
+    public void UnregisterFromKeyboard()
+    {
+        if (UseVirtualKeyboard && KeyboardService != null && KeyboardService.ActiveField == this)
+        {
+            KeyboardService.ClearActiveField();
+        }
+    }
+
+    public void OnDigitInput(int digit)
+    {
+        if (digit < 0 || digit > 9)
+        {
+            return; // Invalid digit, ignore
+        }
+        
+        var decimalSeparator = DecimalSeparator ?? 
+            System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+        var newText = _currentText + digit.ToString();
+        var normalized = newText.Replace(decimalSeparator, ".");
+        if (decimal.TryParse(normalized, out decimal result))
+        {
+            _currentText = newText;
+            _ = SetTextAsync(_currentText);
+        }
+    }
+
+    public void OnDecimalInput()
+    {
+        var decimalSeparator = DecimalSeparator ?? 
+            System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+        
+        if (!_currentText.Contains(decimalSeparator))
+        {
+            if (string.IsNullOrEmpty(_currentText))
+            {
+                _currentText = "0" + decimalSeparator;
+            }
+            else
+            {
+                _currentText += decimalSeparator;
+            }
+            _ = SetTextAsync(_currentText);
+        }
+    }
+
+    public void OnBackspaceInput()
+    {
+        if (_currentText.Length > 0)
+        {
+            var newText = _currentText[..^1];
+            _currentText = newText;
+            _ = SetTextAsync(_currentText);
+        }
+    }
+
+    public void OnClearInput()
+    {
+        _currentText = "";
+        _ = SetTextAsync("");
+    }
+
+    public void OnNegativeInput()
+    {
+        if (!string.IsNullOrEmpty(_currentText))
+        {
+            var decimalSeparator = DecimalSeparator ?? 
+                System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            
+            string newText;
+            if (_currentText.StartsWith("-"))
+            {
+                newText = _currentText[1..];
+            }
+            else
+            {
+                newText = "-" + _currentText;
+            }
+            
+            // Validate the new text
+            var normalized = newText.Replace(decimalSeparator, ".");
+            if (decimal.TryParse(normalized, out decimal result) && result != 0)
+            {
+                _currentText = newText;
+                _ = SetTextAsync(_currentText);
+            }
+            else if (result == 0 && !newText.StartsWith("-"))
+            {
+                // Allow positive zero
+                _currentText = newText;
+                _ = SetTextAsync(_currentText);
+            }
+        }
+    }
+
+    public void OnCharacterInput(char character)
+    {
+        // Not supported for decimal fields
     }
 }

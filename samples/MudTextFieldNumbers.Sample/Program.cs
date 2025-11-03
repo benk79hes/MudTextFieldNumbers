@@ -1,5 +1,6 @@
 using MudTextFieldNumbers.Sample.Components;
 using MudBlazor.Services;
+using MudTextFieldNumbers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,9 @@ builder.Services.AddRazorComponents()
 
 // Add MudBlazor services
 builder.Services.AddMudServices();
+
+// Add VirtualKeyboardService for automatic keyboard integration
+builder.Services.AddSingleton<VirtualKeyboardService>();
 
 var app = builder.Build();
 

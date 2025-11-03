@@ -1,0 +1,122 @@
+@page "/keyboard-auto"
+@rendermode InteractiveServer
+
+<PageTitle>Automatic Virtual Keyboard Demo</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Automatic Virtual Keyboard Integration</MudText>
+<MudText Class="mb-8">
+    This demonstrates the automatic integration where a single virtual keyboard in the footer 
+    automatically connects to any focused field without manual wiring.
+</MudText>
+
+<MudGrid>
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Multiple Fields - Shared Keyboard</MudText>
+            <MudText Class="mb-4">Click any field below and the keyboard will automatically appear at the bottom of the screen.</MudText>
+            
+            <VirtualKeyboardFieldWrapper Field="@_integerField1">
+                <MudTextFieldInteger @ref="_integerField1"
+                                    @bind-Value="_integerValue1"
+                                    UseVirtualKeyboard="true"
+                                    Label="Integer Field 1" 
+                                    Variant="Variant.Outlined"
+                                    Class="mb-3" />
+            </VirtualKeyboardFieldWrapper>
+            
+            <VirtualKeyboardFieldWrapper Field="@_integerField2">
+                <MudTextFieldInteger @ref="_integerField2"
+                                    @bind-Value="_integerValue2"
+                                    UseVirtualKeyboard="true"
+                                    Label="Integer Field 2" 
+                                    Variant="Variant.Outlined"
+                                    Class="mb-3" />
+            </VirtualKeyboardFieldWrapper>
+            
+            <VirtualKeyboardFieldWrapper Field="@_decimalField1">
+                <MudTextFieldDecimal @ref="_decimalField1"
+                                    @bind-Value="_decimalValue1"
+                                    UseVirtualKeyboard="true"
+                                    DecimalPlaces="2"
+                                    Label="Decimal Field (Price)" 
+                                    Variant="Variant.Outlined"
+                                    Class="mb-3" />
+            </VirtualKeyboardFieldWrapper>
+            
+            <VirtualKeyboardFieldWrapper Field="@_decimalField2">
+                <MudTextFieldDecimal @ref="_decimalField2"
+                                    @bind-Value="_decimalValue2"
+                                    UseVirtualKeyboard="true"
+                                    DecimalPlaces="3"
+                                    DecimalSeparator=","
+                                    Label="Decimal Field (Weight kg)" 
+                                    Variant="Variant.Outlined"
+                                    Class="mb-3" />
+            </VirtualKeyboardFieldWrapper>
+            
+            <MudDivider Class="my-4" />
+            
+            <MudText Typo="Typo.h6" GutterBottom="true">Current Values:</MudText>
+            <MudText>Integer 1: @(_integerValue1?.ToString() ?? "null")</MudText>
+            <MudText>Integer 2: @(_integerValue2?.ToString() ?? "null")</MudText>
+            <MudText>Decimal 1: @(_decimalValue1?.ToString("F2") ?? "null")</MudText>
+            <MudText>Decimal 2: @(_decimalValue2?.ToString("F3").Replace(".", ",") ?? "null")</MudText>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Key Benefits</MudText>
+            <MudList T="string" Dense="true">
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText><strong>Zero Manual Wiring</strong> - No event callbacks to wire up</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText><strong>Single Keyboard Instance</strong> - One keyboard serves all fields</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText><strong>Automatic Detection</strong> - Keyboard adapts to field type</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText><strong>Focus-Based Activation</strong> - Shows/hides automatically</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText><strong>Configurable Per Field</strong> - Each field can have its own settings</MudText>
+                </MudListItem>
+            </MudList>
+            
+            <MudDivider Class="my-4" />
+            
+            <MudText Typo="Typo.h6" GutterBottom="true">How It Works</MudText>
+            <MudText Typo="Typo.body2" Class="mb-2">
+                1. <strong>Service Registration</strong>: Add <code>services.AddSingleton&lt;VirtualKeyboardService&gt;()</code> to your Program.cs
+            </MudText>
+            <MudText Typo="Typo.body2" Class="mb-2">
+                2. <strong>Keyboard Manager</strong>: Place <code>&lt;MudVirtualKeyboardManager /&gt;</code> in your MainLayout (see this demo!)
+            </MudText>
+            <MudText Typo="Typo.body2" Class="mb-2">
+                3. <strong>Wrap Fields</strong>: Wrap fields with <code>&lt;VirtualKeyboardFieldWrapper&gt;</code>
+            </MudText>
+            <MudText Typo="Typo.body2" Class="mb-2">
+                4. <strong>Enable Auto-Connect</strong>: Set <code>UseVirtualKeyboard="true"</code> on fields
+            </MudText>
+            <MudText Typo="Typo.body2">
+                5. <strong>Done!</strong> The keyboard automatically appears at the bottom and adapts to each field
+            </MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    // Field references
+    private MudTextFieldInteger? _integerField1;
+    private MudTextFieldInteger? _integerField2;
+    private MudTextFieldDecimal? _decimalField1;
+    private MudTextFieldDecimal? _decimalField2;
+    
+    // Field values
+    private int? _integerValue1;
+    private int? _integerValue2;
+    private decimal? _decimalValue1;
+    private decimal? _decimalValue2;
+}
