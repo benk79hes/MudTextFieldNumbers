@@ -270,16 +270,12 @@ window.virtualKeyboard = {
             }
         }
 
-        // Trigger input and change events with proper timing for Blazor
+        // Trigger input event for Blazor binding
+        // Note: We don't trigger 'change' event here to prevent premature formatting
+        // The 'change' event will be triggered naturally when the field loses focus
         setTimeout(() => {
             const inputEvent = new Event('input', { bubbles: true });
             el.dispatchEvent(inputEvent);
-            
-            // Simple change event after a short delay
-            setTimeout(() => {
-                const changeEvent = new Event('change', { bubbles: true });
-                el.dispatchEvent(changeEvent);
-            }, 50);
         }, 10);
     },
     scrollInputIntoView: function (inputElement) {
