@@ -106,9 +106,5 @@ public class MudTextFieldDecimal : MudTextField<decimal?>
                 return null;
             }
         };
-        
-        // Set Immediate to false to defer value conversion until blur
-        // This prevents auto-formatting with trailing zeros during typing
-        Immediate = false;
     }
 }
