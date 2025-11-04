@@ -239,7 +239,12 @@ window.virtualKeyboard = {
                         return; // Don't update the value yet
                     } else {
                         // For MudNumericField (text-based), use the actual key pressed (respects field's decimal separator)
-                        newValue = currentValue + key;
+                        // If empty, prepend "0" before the decimal separator
+                        if (currentValue === "" || currentValue === "0") {
+                            newValue = "0" + key;
+                        } else {
+                            newValue = currentValue + key;
+                        }
                         newCursorPos = newValue.length;
                     }
                 } else {
