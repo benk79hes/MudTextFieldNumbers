@@ -15,18 +15,24 @@
                      Required="@Required"
                      Error="@Error"
                      ErrorText="@ErrorText"
-                     HelperText="@HelperText" />
+                     HelperText="@HelperText"
+                     @onfocus="OnFocus"
+                     @onblur="OnBlur" />
 
-<div class="mud-virtual-keyboard-footer" 
-     style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 1400; background: white; border-top: 1px solid #e0e0e0; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); padding: 16px;">
-    <MudVirtualKeyboard ShowDecimalButton="false"
-                      ShowNegativeButton="@AllowNegative"
-                      Title="@KeyboardTitle"
-                      DigitClicked="OnDigitClicked"
-                      NegativeClicked="OnNegativeClicked"
-                      BackspaceClicked="OnBackspaceClicked"
-                      ClearClicked="OnClearClicked" />
-</div>
+@if (_showKeyboard)
+{
+    <div class="mud-virtual-keyboard-footer" 
+         style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 1400; background: white; border-top: 1px solid #e0e0e0; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); padding: 16px; animation: slideUp 0.3s ease-out;"
+         @onmousedown:preventDefault>
+        <MudVirtualKeyboard ShowDecimalButton="false"
+                          ShowNegativeButton="@AllowNegative"
+                          Title="@KeyboardTitle"
+                          DigitClicked="OnDigitClicked"
+                          NegativeClicked="OnNegativeClicked"
+                          BackspaceClicked="OnBackspaceClicked"
+                          ClearClicked="OnClearClicked" />
+    </div>
+}
 
 <style>
     @@keyframes slideUp {
@@ -43,6 +49,7 @@
 
 @code {
     private string _currentText = "";
+    private bool _showKeyboard = false;
 
     /// <summary>
     /// The integer value bound to this field.
@@ -133,6 +140,18 @@
     /// </summary>
     [Parameter]
     public string KeyboardTitle { get; set; } = "Enter Number";
+
+    private void OnFocus()
+    {
+        _showKeyboard = true;
+    }
+
+    private async Task OnBlur()
+    {
+        // Delay to allow keyboard button clicks to register
+        await Task.Delay(300);
+        _showKeyboard = false;
+    }
 
     private void OnDigitClicked(int digit)
     {
