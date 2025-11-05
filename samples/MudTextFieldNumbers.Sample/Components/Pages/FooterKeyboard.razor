@@ -5,19 +5,20 @@
 
 <MudText Typo="Typo.h3" GutterBottom="true">Footer Virtual Keyboard Demo</MudText>
 <MudText Class="mb-8">
-    This demo combines the good typing behavior of MudVirtualKeyboard with the footer positioning and auto-show/hide functionality.
-    Click on any field to see the keyboard appear at the bottom of the screen.
+    These components combine the good typing behavior of MudVirtualKeyboard with footer positioning.
+    Each component includes both the input field and its dedicated keyboard displayed at the bottom of the screen.
+    <strong>Note:</strong> Use only ONE of these components per page, as each displays its keyboard in the footer.
 </MudText>
 
 <MudGrid>
-    <MudItem xs="12" md="6">
+    <MudItem xs="12">
         <MudPaper Class="pa-4" Style="margin-bottom: 400px;">
             <MudText Typo="Typo.h5" GutterBottom="true">Integer Input with Footer Keyboard</MudText>
-            <MudText Class="mb-4">Click the field to show the keyboard at the bottom.</MudText>
+            <MudText Class="mb-4">The keyboard is always visible at the bottom and works perfectly with the field.</MudText>
             
             <MudTextFieldIntegerWithKeyboard @bind-Value="_integerValue" 
                                              Label="Enter Integer Value" 
-                                             Placeholder="Click to show keyboard"
+                                             Placeholder="Enter a number"
                                              KeyboardTitle="Integer Keyboard"
                                              AllowNegative="true"
                                              Class="mb-4" />
@@ -26,56 +27,17 @@
         </MudPaper>
     </MudItem>
 
-    <MudItem xs="12" md="6">
-        <MudPaper Class="pa-4" Style="margin-bottom: 400px;">
-            <MudText Typo="Typo.h5" GutterBottom="true">Decimal Input with Footer Keyboard</MudText>
-            <MudText Class="mb-4">Click the field to show the keyboard with decimal support.</MudText>
-            
-            <MudTextFieldDecimalWithKeyboard @bind-Value="_decimalValue"
-                                            DecimalPlaces="2"
-                                            Label="Enter Decimal Value" 
-                                            Placeholder="Click to show keyboard"
-                                            KeyboardTitle="Decimal Keyboard"
-                                            AllowNegative="true"
-                                            Class="mb-4" />
-            
-            <MudText Class="mb-4"><strong>Current value:</strong> @(_decimalValue?.ToString("F2") ?? "not set")</MudText>
-        </MudPaper>
-    </MudItem>
-
-    <MudItem xs="12" md="6">
-        <MudPaper Class="pa-4" Style="margin-bottom: 400px;">
-            <MudText Typo="Typo.h5" GutterBottom="true">Price with Comma Separator</MudText>
-            <MudText Class="mb-4">Example with European-style comma decimal separator.</MudText>
-            
-            <MudTextFieldDecimalWithKeyboard @bind-Value="_priceValue"
-                                            DecimalPlaces="2"
-                                            DecimalSeparator=","
-                                            Label="Enter Price (€)" 
-                                            Placeholder="Click to show keyboard"
-                                            KeyboardTitle="Price Keyboard"
-                                            AllowNegative="false"
-                                            Class="mb-4" />
-            
-            <MudText Class="mb-4"><strong>Current value:</strong> @(_priceValue?.ToString("F2") ?? "not set") €</MudText>
-        </MudPaper>
-    </MudItem>
-
-    <MudItem xs="12" md="6">
-        <MudPaper Class="pa-4" Style="margin-bottom: 400px;">
-            <MudText Typo="Typo.h5" GutterBottom="true">Quantity (3 decimals)</MudText>
-            <MudText Class="mb-4">High precision decimal input example.</MudText>
-            
-            <MudTextFieldDecimalWithKeyboard @bind-Value="_quantityValue"
-                                            DecimalPlaces="3"
-                                            Label="Enter Quantity" 
-                                            Placeholder="Click to show keyboard"
-                                            KeyboardTitle="Quantity Keyboard"
-                                            AllowNegative="false"
-                                            Class="mb-4" />
-            
-            <MudText Class="mb-4"><strong>Current value:</strong> @(_quantityValue?.ToString("F3") ?? "not set")</MudText>
-        </MudPaper>
+    <MudItem xs="12">
+        <MudText Typo="Typo.h5" GutterBottom="true">Other Available Components</MudText>
+        <MudText Class="mb-4">
+            The following components are also available but not shown here to avoid keyboard overlap. 
+            Use them on separate pages or views:
+        </MudText>
+        <MudList T="string" Dense="true">
+            <MudListItem T="string" Icon="@Icons.Material.Filled.Keyboard">
+                <MudText><strong>MudTextFieldDecimalWithKeyboard</strong> - Decimal input with footer keyboard</MudText>
+            </MudListItem>
+        </MudList>
     </MudItem>
 
     <MudItem xs="12">
@@ -86,13 +48,10 @@
                     <MudText>Good typing behavior from MudVirtualKeyboard (no JS interop issues)</MudText>
                 </MudListItem>
                 <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
-                    <MudText>Automatic keyboard appearance on focus</MudText>
+                    <MudText>Keyboard always visible in footer position</MudText>
                 </MudListItem>
                 <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
-                    <MudText>Automatic keyboard dismissal on blur</MudText>
-                </MudListItem>
-                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
-                    <MudText>Footer positioning with smooth slide-up animation</MudText>
+                    <MudText>Footer positioning with clean presentation</MudText>
                 </MudListItem>
                 <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
                     <MudText>Field and keyboard integrated in a single component</MudText>
@@ -107,13 +66,20 @@
                     <MudText>Optional negative number support</MudText>
                 </MudListItem>
             </MudList>
+            
+            <MudText Typo="Typo.h6" Class="mt-4" GutterBottom="true">Usage Example</MudText>
+            <MudPaper Class="pa-3" Style="background-color: #f5f5f5;">
+                <code>
+                    &lt;MudTextFieldIntegerWithKeyboard @@bind-Value="@@_value" <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Label="Enter Number" <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;KeyboardTitle="My Keyboard" <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;AllowNegative="true" /&gt;
+                </code>
+            </MudPaper>
         </MudPaper>
     </MudItem>
 </MudGrid>
 
 @code {
     private int? _integerValue;
-    private decimal? _decimalValue;
-    private decimal? _priceValue;
-    private decimal? _quantityValue;
 }
