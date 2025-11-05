@@ -1,0 +1,253 @@
+@using Microsoft.AspNetCore.Components
+@using MudBlazor
+@namespace MudTextFieldNumbers
+
+<MudTextFieldDecimal @bind-Value="@Value"
+                     @bind-Value:after="OnValueChanged"
+                     @bind-Text="@_currentText"
+                     DecimalPlaces="@DecimalPlaces"
+                     DecimalSeparator="@DecimalSeparator"
+                     Label="@Label"
+                     Variant="@Variant"
+                     Placeholder="@Placeholder"
+                     Class="@Class"
+                     Style="@Style"
+                     Disabled="@Disabled"
+                     ReadOnly="@ReadOnly"
+                     Required="@Required"
+                     Error="@Error"
+                     ErrorText="@ErrorText"
+                     HelperText="@HelperText"
+                     @onfocus="OnFocus"
+                     @onblur="OnBlur" />
+
+@if (_showKeyboard)
+{
+    <div class="mud-virtual-keyboard-footer" 
+         style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 1400; background: white; border-top: 1px solid #e0e0e0; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); padding: 16px; animation: slideUp 0.3s ease-out;"
+         @onmousedown:preventDefault>
+        <MudVirtualKeyboard ShowDecimalButton="true"
+                          ShowNegativeButton="@AllowNegative"
+                          DecimalSeparator="@DecimalSeparator"
+                          Title="@KeyboardTitle"
+                          DigitClicked="OnDigitClicked"
+                          DecimalClicked="OnDecimalClicked"
+                          NegativeClicked="OnNegativeClicked"
+                          BackspaceClicked="OnBackspaceClicked"
+                          ClearClicked="OnClearClicked" />
+    </div>
+}
+
+<style>
+    @@keyframes slideUp {
+        from {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+</style>
+
+@code {
+    private string _currentText = "";
+    private bool _showKeyboard = false;
+
+    /// <summary>
+    /// The decimal value bound to this field.
+    /// </summary>
+    [Parameter]
+    public decimal? Value { get; set; }
+
+    /// <summary>
+    /// Event callback when the value changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<decimal?> ValueChanged { get; set; }
+
+    /// <summary>
+    /// Number of decimal places. Default is 2.
+    /// </summary>
+    [Parameter]
+    public int DecimalPlaces { get; set; } = 2;
+
+    /// <summary>
+    /// Decimal separator character. Default is ".".
+    /// </summary>
+    [Parameter]
+    public string DecimalSeparator { get; set; } = ".";
+
+    /// <summary>
+    /// Label for the text field.
+    /// </summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>
+    /// Variant of the text field. Default is Outlined.
+    /// </summary>
+    [Parameter]
+    public Variant Variant { get; set; } = Variant.Outlined;
+
+    /// <summary>
+    /// Placeholder text for the text field.
+    /// </summary>
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    /// <summary>
+    /// Additional CSS classes for the text field.
+    /// </summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>
+    /// Additional inline styles for the text field.
+    /// </summary>
+    [Parameter]
+    public string? Style { get; set; }
+
+    /// <summary>
+    /// Whether the field is disabled.
+    /// </summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>
+    /// Whether the field is read-only.
+    /// </summary>
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    /// <summary>
+    /// Whether the field is required.
+    /// </summary>
+    [Parameter]
+    public bool Required { get; set; }
+
+    /// <summary>
+    /// Whether the field has an error.
+    /// </summary>
+    [Parameter]
+    public bool Error { get; set; }
+
+    /// <summary>
+    /// Error text to display.
+    /// </summary>
+    [Parameter]
+    public string? ErrorText { get; set; }
+
+    /// <summary>
+    /// Helper text to display.
+    /// </summary>
+    [Parameter]
+    public string? HelperText { get; set; }
+
+    /// <summary>
+    /// Whether to allow negative values. Default is true.
+    /// </summary>
+    [Parameter]
+    public bool AllowNegative { get; set; } = true;
+
+    /// <summary>
+    /// Title for the virtual keyboard. Default is "Enter Number".
+    /// </summary>
+    [Parameter]
+    public string KeyboardTitle { get; set; } = "Enter Number";
+
+    private void OnFocus()
+    {
+        _showKeyboard = true;
+    }
+
+    private async Task OnBlur()
+    {
+        // Delay to allow keyboard button clicks to register
+        await Task.Delay(300);
+        _showKeyboard = false;
+    }
+
+    private void OnDigitClicked(int digit)
+    {
+        _currentText += digit.ToString();
+        var normalized = _currentText.Replace(DecimalSeparator, ".");
+        if (decimal.TryParse(normalized, out decimal result))
+        {
+            Value = result;
+        }
+        StateHasChanged();
+    }
+
+    private void OnDecimalClicked()
+    {
+        if (!_currentText.Contains(DecimalSeparator))
+        {
+            if (string.IsNullOrEmpty(_currentText))
+            {
+                _currentText = "0" + DecimalSeparator;
+            }
+            else
+            {
+                _currentText += DecimalSeparator;
+            }
+            StateHasChanged();
+        }
+    }
+
+    private void OnNegativeClicked()
+    {
+        if (!string.IsNullOrEmpty(_currentText))
+        {
+            if (_currentText.StartsWith("-"))
+            {
+                _currentText = _currentText[1..];
+            }
+            else
+            {
+                _currentText = "-" + _currentText;
+            }
+            
+            var normalized = _currentText.Replace(DecimalSeparator, ".");
+            if (decimal.TryParse(normalized, out decimal result))
+            {
+                Value = result;
+            }
+            StateHasChanged();
+        }
+    }
+
+    private void OnBackspaceClicked()
+    {
+        if (_currentText.Length > 0)
+        {
+            _currentText = _currentText[..^1];
+            if (string.IsNullOrEmpty(_currentText))
+            {
+                Value = null;
+            }
+            else
+            {
+                var normalized = _currentText.Replace(DecimalSeparator, ".");
+                if (decimal.TryParse(normalized, out decimal result))
+                {
+                    Value = result;
+                }
+            }
+            StateHasChanged();
+        }
+    }
+
+    private void OnClearClicked()
+    {
+        _currentText = "";
+        Value = null;
+        StateHasChanged();
+    }
+
+    private async Task OnValueChanged()
+    {
+        await ValueChanged.InvokeAsync(Value);
+    }
+}

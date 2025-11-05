@@ -1,0 +1,80 @@
+@page "/keyboard-footer"
+@rendermode InteractiveServer
+
+<PageTitle>Footer Keyboard Demo</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Footer Virtual Keyboard Demo</MudText>
+<MudText Class="mb-8">
+    These components combine the good typing behavior of MudVirtualKeyboard with footer positioning and automatic show/hide functionality.
+    Click on the field to see the keyboard appear at the bottom of the screen.
+</MudText>
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudPaper Class="pa-4" Style="margin-bottom: 400px;">
+            <MudText Typo="Typo.h5" GutterBottom="true">Decimal Input with Footer Keyboard</MudText>
+            <MudText Class="mb-4">Click the field to show the keyboard at the bottom. The keyboard will automatically hide when you click outside.</MudText>
+            
+            <MudTextFieldDecimalWithKeyboard @bind-Value="_decimalValue"
+                                            DecimalPlaces="2"
+                                            Label="Enter Decimal Value" 
+                                            Placeholder="Click to show keyboard"
+                                            KeyboardTitle="Decimal Keyboard"
+                                            AllowNegative="true"
+                                            Class="mb-4" />
+            
+            <MudText Class="mb-4"><strong>Current value:</strong> @(_decimalValue?.ToString("F2") ?? "not set")</MudText>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h5" GutterBottom="true">Features</MudText>
+            <MudList T="string" Dense="true">
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Good typing behavior from MudVirtualKeyboard (no JS interop issues)</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Automatic keyboard appearance on focus</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Automatic keyboard dismissal on blur</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Footer positioning with smooth slide-up animation</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Field and keyboard integrated in a single component</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Supports both integer and decimal values</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Customizable decimal separator (dot or comma)</MudText>
+                </MudListItem>
+                <MudListItem T="string" Icon="@Icons.Material.Filled.Check">
+                    <MudText>Optional negative number support</MudText>
+                </MudListItem>
+            </MudList>
+            
+            <MudText Typo="Typo.h6" Class="mt-4" GutterBottom="true">Usage Example</MudText>
+            <MudPaper Class="pa-3" Style="background-color: #f5f5f5;">
+                <code>
+                    &lt;MudTextFieldDecimalWithKeyboard @@bind-Value="@@_value" <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;DecimalPlaces="2" <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Label="Enter Amount" <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;KeyboardTitle="My Keyboard" <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;AllowNegative="true" /&gt;
+                </code>
+            </MudPaper>
+            
+            <MudText Typo="Typo.body2" Class="mt-4">
+                <strong>Note:</strong> Also available is <strong>MudTextFieldIntegerWithKeyboard</strong> for integer values.
+            </MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private decimal? _decimalValue;
+}
